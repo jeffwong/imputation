@@ -1,0 +1,12 @@
+Package: imputation
+Type: Package
+Title: imputation
+Version: 1.4
+Date: 2012-05-04
+Author: Jeffrey Wong
+Maintainer: <jeff.ct.wong@gmail.com>
+Description: Fill missing values in a data matrix
+  using SVD, SVT, or kNN imputation.  
+License: GPL
+LazyLoad: yes
+Depends: robustbase
