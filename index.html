@@ -40,30 +40,47 @@
 
         <h2>About the package</h2>
 
-<p><a href="http://en.wikipedia.org/wiki/Imputation_(statistics)">Imputation</a> is the process of filling missing values in a dataset with a intelligently reconstructed value.  This R package provides simple methods for imputing a data matrix.  To install, open a R session and issue</p>
+<p><a href="http://en.wikipedia.org/wiki/Imputation_(statistics">Imputation</a>) is the process of filling missing values in a dataset with a intelligently reconstructed value.  This R package provides simple methods for imputing a data matrix.  To install, open a R session and issue</p>
 
 <pre><code>install.packages("imputation")
 </code></pre>
 
 <h2>Usage</h2>
 
-<h3>Example 1</h3>
-
-<h3>Example 2</h3>
+<pre><code>x = matrix(rnorm(100),10,10)
+x[1,1] = NA
+x[5,8] = NA
+x[2,3] = NA
+x[7,7] = NA
+k = cv.SVDImpute(x)$k
+SVDImpute(x, k)
+</code></pre>
 
 <h2>Algorithms</h2>
 
 <h3>Mean Imputation</h3>
 
+<p>Simply fills missing values using the mean of the column.  The mean is the minimizer of squared error loss for i.i.d data</p>
+
 <h3>Persistence Imputation</h3>
 
-<h3>SVD Imputation</h3>
+<p>For time series data, fill an observation at time t using t-1</p>
 
 <h3>kNN Imputation</h3>
 
+<p>Find neighbors that don't have missing values, and fill using the mean of the neighbors.</p>
+
+<h3>SVD Imputation</h3>
+
+<p>Least squares can be computed even when there is missing data.  The SVD problem can be formulated as minimizing the squared error between a matrix X and its low rank projection X<em>.  This problem can be solved using alternating least squares, and X</em> is returned as the imputed matrix.</p>
+
 <h3>SVT Imputation</h3>
 
+<p><a href="http://www-stat.stanford.edu/%7Ecandes/svt/papers.html">Singular Value Thresholding</a> a la Emmanuel Candes.</p>
+
 <h3>GBM Imputation</h3>
+
+<p>Uses gradient boosting machines, an ensemble of decision trees, to fill missing values.  GBM is particularly powerful because it can handle categorical data as well</p>
       </section>
 
     </div>
