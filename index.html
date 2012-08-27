@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script src="javascripts/respond.js"></script>
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <!--[if lt IE 9]>
       <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -47,7 +48,9 @@
 
 <h2>Usage</h2>
 
-<pre><code>x = matrix(rnorm(100),10,10)
+<pre><code>
+require(imputation)
+x = matrix(rnorm(100),10,10)
 x[1,1] = NA
 x[5,8] = NA
 x[2,3] = NA
@@ -64,7 +67,7 @@ SVDImpute(x, k)
 
 <h3>Persistence Imputation</h3>
 
-<p>For time series data, fill an observation at time t using t-1</p>
+<p>For time series data, fill an observation at time \[t\] using the most recent known value</p>
 
 <h3>kNN Imputation</h3>
 
@@ -72,7 +75,10 @@ SVDImpute(x, k)
 
 <h3>SVD Imputation</h3>
 
-<p>Least squares can be computed even when there is missing data.  The SVD problem can be formulated as minimizing the squared error between a matrix X and its low rank projection X<em>.  This problem can be solved using alternating least squares, and X</em> is returned as the imputed matrix.</p>
+<p>Least squares can be computed even when there is missing data.  The SVD problem can be formulated as 
+\[ \DeclareMathOperator*{\argmin}{arg\,min} ||X - UDV^T||_F^2 \]
+minimizing the squared error between a matrix \[X\] and its low rank projection \[\hat{X}\].
+This problem can be solved using alternating least squares, and \[\hat{X = UDV^T}\] is returned as the imputed matrix.</p>
 
 <h3>SVT Imputation</h3>
 
