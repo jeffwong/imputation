@@ -9,4 +9,4 @@ Description: Fill missing values in a data matrix
   using SVD, SVT, or kNN imputation.  
 License: GPL
 LazyLoad: yes
-Depends: robustbase
+Depends: robustbase, pdist, gbm

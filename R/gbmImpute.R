@@ -1,26 +1,16 @@
-require(gbm)
-
 gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose=T, ...) {
   
-  missing.matrix = is.na(x)
-  numMissing = sum(missing.matrix)
-  if(verbose) {
-    print(paste("imputing on", numMissing, "missing values with matrix size",
-                nrow(x)*ncol(x), sep=" "))
-  }
-  if(numMissing == 0) {
-    return (x)
-  }
-  
-  missing.cols.indices = which(apply(missing.matrix, 2, function(i) {
-    any(i)
-  }))
+  prelim = impute.prelim(x)
+  if (prelim$numMissing == 0) return (x)
+  missing.matrix = prelim$missing.matrix
+  missing.cols.indices = prelim$missing.cols.indices
   
   print(paste("Training over:", length(missing.cols.indices), "features"))
   for (i in 1:max.iters) {
     if (verbose) print (paste("Begin iteration: ", i))
     x[,missing.cols.indices] = sapply(missing.cols.indices, function(j) {
-      print(j)
+      if (verbose) print( paste("Imputing on feature: ", j))
+      #response variable in gbm cannot contain missing data
       good.data = which(!missing.matrix[,j])
       gbm1 <- gbm(x[good.data,j] ~ .,
                   data = as.data.frame(x[good.data,-j]),

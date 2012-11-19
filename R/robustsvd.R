@@ -1,15 +1,8 @@
 robustSVDImpute = function(x, k, alpha = 1/2, max.iters = 10, verbose = T ) {
-    
-    require(robustbase)
-    missing.matrix = is.na(x)
-    numMissing = sum(missing.matrix)
-    if(verbose) {
-        print(paste("imputing on", numMissing, "missing values with matrix size",
-              nrow(x)*ncol(x), sep=" "))
-    }
-    if(numMissing == 0) {
-        return (x)
-    }
+
+    prelim = impute.prelim(x)
+    if (prelim$numMissing == 0) return (x)
+    missing.matrix = prelim$missing.matrix
 
     n = nrow(x)
     U = matrix(rnorm(n*k), n, k)

@@ -1,28 +1,16 @@
 kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, verbose=T) {
   if(k >= nrow(x))
     stop("k must be less than the number of rows in x")
-  missing.matrix = is.na(x)
-  numMissing = sum(missing.matrix) 
-  if(verbose) {
-    print(paste("imputing on", numMissing, "missing values with matrix size",
-      nrow(x)*ncol(x), sep=" "))
-  }
-  if(numMissing == 0) {
-    return (x)
-  }
+
+  prelim = impute.prelim(x)
+  if (prelim$numMissing == 0) return (x)
+  missing.matrix = prelim$missing.matrix
+  x.missing = prelim$x.missing
+
+  if (verbose) print("Computing distance matrix...")
+  if (is.null(x.dist) & nrow(x) < 2000) x.dist = as.matrix(dist(x, upper=T))
+  if (verbose) print("Distance matrix complete")
   
-  if(verbose)
-    print("Computing distance matrix...")
-  if (is.null(x.dist)) {
-      x.dist = as.matrix(dist(x, upper=T))
-  }
-  if(verbose)
-    print("Distance matrix complete")
-  
-  missing.rows.indices = which(apply(missing.matrix, 1, function(i) {
-    any(i)
-  }))
-  x.missing = (cbind(1:nrow(x),x))[missing.rows.indices,]
   x.missing.imputed = t(apply(x.missing, 1, function(i) {
     rowIndex = i[1]
     i.original = i[-1]
@@ -35,7 +23,10 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, verbose=T) {
       neighbor.indices = which(!missing.matrix[,j])
       #lookup the distance to these neighbors
       #order the neighbors to find the closest ones
-      knn.ranks = order(x.dist[rowIndex,neighbor.indices])
+      if (!is.null(x.dist))
+        knn.ranks = order(x.dist[rowIndex,neighbor.indices])
+      else
+        knn.ranks = order(as.vector(pdist(x, rowIndex, neighbor.indices)))
       #identify the row number in the original data matrix of the knn
       knn = neighbor.indices[(knn.ranks[1:k])]
       impute.fn(x[knn,j])

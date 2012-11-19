@@ -14,19 +14,13 @@ SVDImpute = function(x, k, num.iters = 10, gpu=F, verbose=T) {
   if(gpu) {
     stop("no gpu support yet")
   }
-  missing.matrix = is.na(x)
-  numMissing = sum(missing.matrix)
-  if(verbose) {
-    print(paste("imputing on", numMissing, "missing values with matrix size",
-      nrow(x)*ncol(x), sep=" "))
-  }
-  if(numMissing == 0) {
-    return (x)
-  }
-  missing.cols.indices = which(apply(missing.matrix, 2, function(i) {
-    any(i)
-  }))
-  x.missing = (rbind(1:ncol(x), x))[,missing.cols.indices]
+
+  prelim = impute.prelim(x)
+  if (prelim$numMissing == 0) return (x)
+  missing.matrix = prelim$missing.matrix
+  x.missing = prelim$missing.matrix
+
+  #First initialize missing values with mean
   x.missing.imputed = apply(x.missing, 2, function(j) {
     colIndex = j[1]
     j.original = j[-1]
@@ -36,7 +30,9 @@ SVDImpute = function(x, k, num.iters = 10, gpu=F, verbose=T) {
     j.original[missing.rows] = mean(j.original[-missing.rows])
     j.original
   })
+  #replace columns with missing values with x.missing.imputed
   x[,missing.cols.indices] = x.missing.imputed
+  #Fill anything that is still NA with 0
   missing.matrix2 = is.na(x)
   x[missing.matrix2] = 0
   for(i in 1:num.iters) {
@@ -76,19 +72,11 @@ cv.SVDImpute = function(x, k.max=floor(ncol(x)/2)) {
 }
 
 SVTImpute = function(x, lambda, verbose=F) {
-  missing.matrix = is.na(x)
-  numMissing = sum(missing.matrix)
-  if(verbose) {
-    print(paste("imputing on", numMissing, "missing values with matrix size",
-      nrow(x)*ncol(x), sep=" "))
-  }
-  if(numMissing == 0) {
-    return (x)
-  }
-  missing.cols.indices = which(apply(missing.matrix, 2, function(i) {
-    any(i)
-  }))
-  x.missing = (rbind(1:ncol(x), x))[,missing.cols.indices]
+  prelim = impute.prelim(x)
+  if (prelim$numMissing == 0) return (x)
+  missing.matrix = prelim$missing.matrix
+  x.missing = prelim$missing.matrix
+
   x.missing.imputed = apply(x.missing, 2, function(j) {
     colIndex = j[1]
     j.original = j[-1]
