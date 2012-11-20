@@ -17,7 +17,7 @@ getSVTImpute = function(x) {
 }
 
 getKNNImpute = function(x) {
-    kNNImpute(x, k = 3, verbose = F)$x
+    kNNImpute(x, k = 3, pdist = T, verbose = F)$x
 }
 
 getgbmImpute = function(x) {
@@ -55,7 +55,7 @@ system.time(imputation.benchmark.random(imputation.fn = getSVTImpute,
 
 set.seed(100)
 system.time(imputation.benchmark.random(imputation.fn = getKNNImpute,
-                                        numRow = 2000, numCol = 10,
+                                        numRow = 5000, numCol = 10,
                                         numMissing = 500))
 
 set.seed(100)
