@@ -1,4 +1,4 @@
-impute.prelim = function(x) {
+impute.prelim = function(x, byrow = T, verbose=F) {
   missing.matrix = is.na(x)
   numMissing = sum(missing.matrix) 
   if(verbose) {
@@ -19,7 +19,8 @@ impute.prelim = function(x) {
   missing.cols.indices = which(apply(missing.matrix, 2, function(i) {
     any(i)
   }))
-  x.missing = (cbind(1:nrow(x),x))[missing.rows.indices,]
+  if (byrow) x.missing = cbind(1:nrow(x),x)[missing.rows.indices,]
+  else x.missing = rbind(1:ncol(x),x)[,missing.cols.indices]
 
   return ( list (missing.matrix = missing.matrix,
                  numMissing = numMissing,

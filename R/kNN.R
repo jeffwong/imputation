@@ -6,6 +6,7 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, verbose=T) {
   if (prelim$numMissing == 0) return (x)
   missing.matrix = prelim$missing.matrix
   x.missing = prelim$x.missing
+  missing.rows.indices = prelim$missing.rows.indices
 
   if (verbose) print("Computing distance matrix...")
   if (is.null(x.dist) & nrow(x) < 2000) x.dist = as.matrix(dist(x, upper=T))
@@ -26,7 +27,8 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, verbose=T) {
       if (!is.null(x.dist))
         knn.ranks = order(x.dist[rowIndex,neighbor.indices])
       else
-        knn.ranks = order(as.vector(pdist(x, rowIndex, neighbor.indices)))
+        knn.ranks = order(as.vector(pdist(x, indices.A = rowIndex,
+                                          indices.B = neighbor.indices)))
       #identify the row number in the original data matrix of the knn
       knn = neighbor.indices[(knn.ranks[1:k])]
       impute.fn(x[knn,j])

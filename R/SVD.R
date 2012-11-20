@@ -15,10 +15,11 @@ SVDImpute = function(x, k, num.iters = 10, gpu=F, verbose=T) {
     stop("no gpu support yet")
   }
 
-  prelim = impute.prelim(x)
+  prelim = impute.prelim(x, byrow=F)
   if (prelim$numMissing == 0) return (x)
   missing.matrix = prelim$missing.matrix
-  x.missing = prelim$missing.matrix
+  x.missing = prelim$x.missing
+  missing.cols.indices = prelim$missing.cols.indices
 
   #First initialize missing values with mean
   x.missing.imputed = apply(x.missing, 2, function(j) {

@@ -39,42 +39,68 @@ getMeanImpute = function(x) {
 #RANDOM DATA IMPUTATION
 
 set.seed(100)
-imputation.benchmark.random(imputation.fn = getSVDImpute, numRow = 1000, numCol = 10, numMissing = 500)
+system.time(imputation.benchmark.random(imputation.fn = getSVDImpute,
+                                        numRow = 1000, numCol = 10,
+                                        numMissing = 500))
 
 set.seed(100)
-imputation.benchmark.random(imputation.fn = getRobustSVDImpute, numRow = 1000, numCol = 10, numMissing = 500)
+system.time(imputation.benchmark.random(imputation.fn = getRobustSVDImpute,
+                                        numRow = 1000, numCol = 10,
+                                        numMissing = 500))
 
 set.seed(100)
-imputation.benchmark.random(imputation.fn = getSVTImpute, numRow = 1000, numCol = 10, numMissing = 500)
+system.time(imputation.benchmark.random(imputation.fn = getSVTImpute,
+                                        numRow = 1000, numCol = 10,
+                                        numMissing = 500))
 
 set.seed(100)
-imputation.benchmark.random(imputation.fn = getKNNImpute, numRow = 1000, numCol = 10, numMissing = 500)
+system.time(imputation.benchmark.random(imputation.fn = getKNNImpute,
+                                        numRow = 2000, numCol = 10,
+                                        numMissing = 500))
 
 set.seed(100)
-imputation.benchmark.random(imputation.fn = getgbmImpute, numRow = 1000, numCol = 10, numMissing = 500)
+system.time(imputation.benchmark.random(imputation.fn = getgbmImpute,
+                                        numRow = 1000, numCol = 10,
+                                        numMissing = 500))
 
 set.seed(100)
-imputation.benchmark.random(imputation.fn = getMeanImpute, numRow = 1000, numCol = 10, numMissing = 500)
+system.time(imputation.benchmark.random(imputation.fn = getMeanImpute,
+                                        numRow = 1000, numCol = 10,
+                                        numMissing = 500))
 
 #TIME SERIES IMPUTATION
 
 set.seed(100)
-imputation.benchmark.ts(imputation.fn = getSVDImpute, numTS = 1000, TSlength = 10, numMissing = 500)
+system.time(imputation.benchmark.ts(imputation.fn = getSVDImpute,
+                                    numTS = 1000, TSlength = 10,
+                                    numMissing = 500))
 
 set.seed(100)
-imputation.benchmark.ts(imputation.fn = getRobustSVDImpute, numTS = 1000, TSlength = 10, numMissing = 500)
+system.time(imputation.benchmark.ts(imputation.fn = getRobustSVDImpute,
+                                    numTS = 1000, TSlength = 10,
+                                    numMissing = 500))
 
 set.seed(100)
-imputation.benchmark.ts(imputation.fn = getSVTImpute, numTS = 1000, TSlength = 10, numMissing = 500)
+system.time(imputation.benchmark.ts(imputation.fn = getSVTImpute,
+                                    numTS = 1000, TSlength = 10,
+                                    numMissing = 500))
 
 set.seed(100)
-imputation.benchmark.ts(imputation.fn = getKNNImpute, numTS = 1000, TSlength = 10, numMissing = 500)
+system.time(imputation.benchmark.ts(imputation.fn = getKNNImpute,
+                                    numTS = 1000, TSlength = 10,
+                                    numMissing = 500))
 
 set.seed(100)
-imputation.benchmark.ts(imputation.fn = getgbmImpute, numTS = 1000, TSlength = 10, numMissing = 500)
+system.time(imputation.benchmark.ts(imputation.fn = getgbmImpute,
+                                    numTS = 1000, TSlength = 10,
+                                    numMissing = 500))
 
 set.seed(100)
-imputation.benchmark.ts(imputation.fn = getPersistenceImpute, numTS = 1000, TSlength = 10, numMissing = 500)
+system.time(imputation.benchmark.ts(imputation.fn = getPersistenceImpute,
+                                    numTS = 1000, TSlength = 10,
+                                    numMissing = 500))
 
 set.seed(100)
-imputation.benchmark.ts(imputation.fn = getMeanImpute, numTS = 1000, TSlength = 10, numMissing = 500)
+system.time(imputation.benchmark.ts(imputation.fn = getMeanImpute,
+                                    numTS = 1000, TSlength = 10,
+                                    numMissing = 500))
