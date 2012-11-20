@@ -1,15 +1,24 @@
+.hasTimestamp = function(x) {
+  classes = sapply(x[1,], class)
+  which(classes %in% c("POSIXt", "POSIXlt", "POSIXct", "date"))
+}
+
 gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose=T, ...) {
-  
-  prelim = impute.prelim(x)
+  prelim = impute.prelim(x,byrow = F)
   if (prelim$numMissing == 0) return (x)
   missing.matrix = prelim$missing.matrix
   missing.cols.indices = prelim$missing.cols.indices
-  
-  print(paste("Training over:", length(missing.cols.indices), "features"))
+ 
+  timestampIndex = .hasTimestamp(x)
+  if (length(timestampIndex) > 0) {
+    x = cbind(x, projection.time(x[,timestampIndex]))
+  }
+
+  if (verbose) print(paste("Training over:", length(missing.cols.indices), "features"))
   for (i in 1:max.iters) {
     if (verbose) print (paste("Begin iteration: ", i))
     x[,missing.cols.indices] = sapply(missing.cols.indices, function(j) {
-      if (verbose) print( paste("Imputing on feature: ", j))
+      if (verbose) print(paste("Imputing on feature: ", j))
       #response variable in gbm cannot contain missing data
       good.data = which(!missing.matrix[,j])
       gbm1 <- gbm(x[good.data,j] ~ .,

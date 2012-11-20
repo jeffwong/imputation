@@ -1,4 +1,4 @@
-kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, verbose=T) {
+kNNImpute = function(x, k, x.dist = NULL, pdist = T, impute.fn = mean, verbose=T) {
   if(k >= nrow(x))
     stop("k must be less than the number of rows in x")
 
@@ -9,7 +9,7 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, verbose=T) {
   missing.rows.indices = prelim$missing.rows.indices
 
   if (verbose) print("Computing distance matrix...")
-  if (is.null(x.dist) & nrow(x) < 2000) x.dist = as.matrix(dist(x, upper=T))
+  if (is.null(x.dist) & !pdist) x.dist = dist(x)
   if (verbose) print("Distance matrix complete")
   
   x.missing.imputed = t(apply(x.missing, 1, function(i) {
@@ -24,11 +24,13 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, verbose=T) {
       neighbor.indices = which(!missing.matrix[,j])
       #lookup the distance to these neighbors
       #order the neighbors to find the closest ones
-      if (!is.null(x.dist))
-        knn.ranks = order(x.dist[rowIndex,neighbor.indices])
+      if (!is.null(x.dist)) {
+        indices.1d = .dist.2dto1d(rowIndex, neighbor.indices, nrow(x))
+        knn.ranks = order(x.dist[indices.1d])
+      }
       else
-        knn.ranks = order(as.vector(pdist(x, indices.A = rowIndex,
-                                          indices.B = neighbor.indices)))
+        knn.ranks = order(pdist(x, indices.A = rowIndex,
+                          indices.B = neighbor.indices)$dist)
       #identify the row number in the original data matrix of the knn
       knn = neighbor.indices[(knn.ranks[1:k])]
       impute.fn(x[knn,j])
@@ -54,7 +56,7 @@ cv.kNNImpute = function(x, k.max=5) {
   remove.indices = prelim$remove.indices
   x.train = prelim$x.train
 
-  x.dist = if (nrow(x) <= 2000) dist(x, upper = T) else NULL
+  x.dist = dist(x)
   rmse = sapply(1:k.max, function(i) {
     x.imputed = kNNImpute(x.train, i, x.dist, verbose=F)$x
     error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
@@ -62,4 +64,19 @@ cv.kNNImpute = function(x, k.max=5) {
   })
   list(k = which.min(rmse), rmse = rmse[which.min(rmse)],
        k.full = 1:k.max, rmse.full = rmse)
+}
+
+.dist.2dto1d = function(i,j,n) {
+  ret = rep(0, length(j))
+  j.larger.indices = which(j > i)
+  j.smaller.indices = which(j < i)
+  if (length(j.larger.indices) > 0) {
+    j.larger = j[j.larger.indices]
+    ret[1:length(j.larger)] = (j.larger-1)*n - j.larger^2/2 + i - 1
+  }
+  if (length(j.smaller.indices) > 0) {
+    j.smaller = j[j.smaller.indices]
+    ret[(length(j.larger.indices)+1) : length(j)] = (i-1)*n - i^2/2 + j.smaller - 1
+  }
+  ret
 }
