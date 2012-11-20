@@ -27,3 +27,15 @@ impute.prelim = function(x) {
                  missing.cols.indices = missing.cols.indices,
                  x.missing = x.missing) )
 }
+
+cv.impute.prelim = function(x) {
+  n = nrow(x) * ncol(x)
+  missing.matrix = is.na(x)
+  valid.data = which(!missing.matrix)
+
+  remove.indices = sample(valid.data, 1/3*length(valid.data))
+  x.train = x; x.train[remove.indices] = NA
+
+  return (list(remove.indices = remove.indices,
+               x.train = x.train))
+}

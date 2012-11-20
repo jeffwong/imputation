@@ -25,3 +25,17 @@ robustSVDImpute = function(x, k, alpha = 1/2, max.iters = 10, verbose = T ) {
         missing.matrix=missing.matrix
     ))
 }
+
+cv.robustSVDImpute = function(x, k.max=floor(ncol(x)/2)) {
+  prelim = cv.impute.prelim(x)
+  remove.indices = prelim$remove.indices
+  x.train = prelim$x.train
+
+  rmse = sapply(1:k.max, function(i) {
+    x.imputed = robustSVDImpute(x.train, i, verbose=F)$x
+    error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
+    sqrt(mean(error^2))
+  })
+  list(k = which.min(rmse), rmse = rmse[which.min(rmse)],
+       k.full = 1:k.max, rmse.full = rmse)
+}

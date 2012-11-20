@@ -46,23 +46,18 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, verbose=T) {
 }
 
 cv.kNNImpute = function(x, k.max=5) {
-  if(k.max >= nrow(x))
-    stop("k.max must be less than nrow(x)")
-  n = nrow(x) * ncol(x)
-  missing.matrix = is.na(x)
-  valid.data = which(!missing.matrix)
+  if(k.max >= nrow(x)) stop("k.max must be less than nrow(x)")
 
-  remove.indices = sample(valid.data, 1/3*length(valid.data))
-  x.train = x
-  x.train[remove.indices] = NA
+  prelim = cv.impute.prelim(x)
+  remove.indices = prelim$remove.indices
+  x.train = prelim$x.train
 
-  absolute.error = sapply(1:k.max, function(i) {
-    x.imputed = kNNImpute(x.train, i, verbose=F)$x
-    mae = abs((x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices] )
+  x.dist = if (nrow(x) <= 2000) dist(x, upper = T) else NULL
+  rmse = sapply(1:k.max, function(i) {
+    x.imputed = kNNImpute(x.train, i, x.dist, verbose=F)$x
+    error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
+    sqrt(mean(error^2))
   })
-  mae = apply(absolute.error, 2, function(j) {
-    mean(j)
-  })
-  list(k = which.min(mae), mae = mae[which.min(mae)],
-    k.full = 1:k.max, mae.full = mae)
+  list(k = which.min(rmse), rmse = rmse[which.min(rmse)],
+       k.full = 1:k.max, rmse.full = rmse)
 }

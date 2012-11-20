@@ -14,16 +14,18 @@ imputation.benchmark.random = function(numRow = 100, numCol = 100, numMissing = 
     }
     x.imputed = imputation.fn(x.missing, ...)
 
-    SSE = 0
+    SE = rep(0, numMissing)
     for (i in 1:numMissing) {
-        SSE = SSE + (x[missingX[i], missingY[i]] - x.imputed[missingX[i], missingY[i]])^2
+        x.i = missingX[i]; y.i = missingY[i]
+        error = (x[x.i, y.i] - x.imputed[x.i, y.i]) / x[x.i, y.i]
+        SE[i] = error^2
     }
     return (
         list(
             data = x,
             missing = x.missing,
             imputed = x.imputed,
-            SSE = SSE
+            rmse = sqrt(mean(SE))
         )
     )
 }
@@ -53,16 +55,18 @@ imputation.benchmark.ts = function(numTS = 100, TSlength = 100, numMissing = 50,
     }
     x.imputed = imputation.fn(x.missing, ...)
 
-    SSE = 0
+    SE = rep(0, numMissing)
     for (i in 1:numMissing) {
-        SSE = SSE + (x[missingX[i], missingY[i]] - x.imputed[missingX[i], missingY[i]])^2
+        x.i = missingX[i]; y.i = missingY[i]
+        error = (x[x.i, y.i] - x.imputed[x.i, y.i]) / x[x.i, y.i]
+        SE[i] = error^2
     }
     return (
         list(
             data = x,
             missing = x.missing,
             imputed = x.imputed,
-            SSE = SSE
+            rmse = sqrt(mean(SE))
         )
     )
 }

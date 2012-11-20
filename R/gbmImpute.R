@@ -43,19 +43,14 @@ gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose=T, ..
   ))
 }
 
-cv.gbmImpute = function(x, missing.rate = 0.1, ...) {
-  n = nrow(x) * ncol(x)
-  missing.matrix = is.na(x)
-  valid.data = which(!missing.matrix)
-  
-  remove.indices = sample(valid.data, missing.rate*length(valid.data))
-  x.train = x
-  x.train.temp = t(x.train)
-  x.train.temp[remove.indices] = NA
-  x.train = t(x.train.temp)
-  
+cv.gbmImpute = function(x, ...) {
+  prelim = cv.impute.prelim(x)
+  remove.indices = prelim$remove.indices
+  x.train = prelim$x.train
+
   x.imputed = gbmImpute(x.train, verbose=F, ...)$x
-  mae = mean(abs((x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices] ))
+  error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
+  rmse = sqrt(mean(error^2))
   
-  list(imputation = x.imputed, mae = mae)
+  list(imputation = x.imputed, rmse = rmse)
 }

@@ -30,3 +30,15 @@ persistenceImpute = function(x, verbose=T) {
         missing.matrix=missing.matrix
     ))
 }
+
+cv.persistenceImpute = function(x) {
+  prelim = cv.impute.prelim(x)
+  remove.indices = prelim$remove.indices
+  x.train = prelim$x.train
+
+  x.imputed = persistenceImpute(x.train, verbose=F, ...)$x
+  error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
+  rmse = sqrt(mean(error^2))
+  
+  list(imputation = x.imputed, rmse = rmse)
+}
