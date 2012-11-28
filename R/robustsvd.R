@@ -1,3 +1,16 @@
+#' Robust SVD Imputation
+#'
+#' Imputation using a robust implementation of the SVD
+#' Formulate the SVD as a biconvex minimization problem, and solve
+#' it by alternating least squares.  When computing least squares,
+#' use the least trimmed squares implementation, a robust
+#' implementation that trims extreme values out
+#' @param x a data frame or matrix where each row represents a different record
+#' @param k the rank-k approximation to use for x
+#' @param alpha the alpha passed into least trimmed squares
+#' @param max.iters the number of times to alternate least trimmed squares
+#' @param verbose if TRUE print status updates
+#' @export
 robustSVDImpute = function(x, k, alpha = 1/2, max.iters = 10, verbose = T ) {
 
     prelim = impute.prelim(x)
@@ -26,6 +39,15 @@ robustSVDImpute = function(x, k, alpha = 1/2, max.iters = 10, verbose = T ) {
     ))
 }
 
+#' CV for robustSVDImpute
+#'
+#' Cross Validation for robust SVD Imputation
+#' Artificially erase some data and run robustSVDImpute multiple times,
+#' varying k from 1 to k.max.  For each k, compute the RMSE on the subset of x
+#' for which data was artificially erased.
+#' @param x a data frame or matrix where each row represents a different record
+#' @param k.max the largest rank used to approximate x
+#' @export
 cv.robustSVDImpute = function(x, k.max=floor(ncol(x)/2)) {
   prelim = cv.impute.prelim(x)
   remove.indices = prelim$remove.indices

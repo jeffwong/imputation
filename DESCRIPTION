@@ -6,7 +6,21 @@ Date: 2012-05-04
 Author: Jeffrey Wong
 Maintainer: <jeff.ct.wong@gmail.com>
 Description: Fill missing values in a data matrix
-  using SVD, SVT, or kNN imputation.  
+    using SVD, SVT, or kNN imputation.
 License: GPL
 LazyLoad: yes
-Depends: robustbase, pdist, gbm
+Depends:
+    robustbase,
+    pdist,
+    gbm
+Collate:
+    'SVD.R'
+    'SVT.R'
+    'benchmark.R'
+    'gbmImpute.R'
+    'kNN.R'
+    'meanImpute.R'
+    'persistence.R'
+    'robustsvd.R'
+    'tsImpute.R'
+    'utils.R'

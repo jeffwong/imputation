@@ -10,6 +10,22 @@
   x.svd$u %*% diag(x.svd$d[1:k],nrow=k,ncol=k) %*% t(x.svd$v)
 }
 
+#' SVD Imputation
+#'
+#' Imputation using the SVD
+#' First fill missing values using the mean of the column
+#' Then, compute a low, rank-k approximation of x.  Fill the
+#' missing values again from the rank-k approximation.  Recompute
+#' the rank-k approximation with the imputed values and fill again,
+#' repeating num.iters times
+#' @param x a data frame or matrix where each row represents a different record
+#' @param k the rank-k approximation to use for x
+#' @param num.iters the number of times to compute the rank-k approximation
+#'   and impute the missing data
+#' @param gpu if TRUE use a gpu implementation of SVD provided by the R package
+#'   gputools
+#' @param verbose if TRUE print status updates
+#' @export
 SVDImpute = function(x, k, num.iters = 10, gpu=F, verbose=T) {
   if(gpu) {
     stop("no gpu support yet")
@@ -47,6 +63,15 @@ SVDImpute = function(x, k, num.iters = 10, gpu=F, verbose=T) {
   ))
 }
 
+#' CV for SVDImpute
+#'
+#' Cross Validation for SVD Imputation
+#' Artificially erase some data and run SVDImpute multiple times,
+#' varying k from 1 to k.max.  For each k, compute the RMSE on the subset of x
+#' for which data was artificially erased.
+#' @param x a data frame or matrix where each row represents a different record
+#' @param k.max the largest rank used to approximate x
+#' @export
 cv.SVDImpute = function(x, k.max=floor(ncol(x)/2)) {
   if(k.max > ncol(x)) {
     stop("Rank-k approximation cannot exceed the number

@@ -1,3 +1,14 @@
+#' SVT Imputation
+#'
+#' Imputation using Singular Value Thresholding
+#' First fill missing values using the mean of the column.
+#' Then, compute the SVD of the matrix, and subtract lambda
+#' from each of the singular values, thresholding at 0.  Impute
+#' by multiplying back out the augmented SVD
+#' @param x a data frame or matrix where each row represents a different record
+#' @param lambda the penalty on the singular values
+#' @param verbose if TRUE print status updates
+#' @export
 SVTImpute = function(x, lambda, verbose=F) {
   prelim = impute.prelim(x, byrow=F)
   if (prelim$numMissing == 0) return (x)
@@ -35,6 +46,15 @@ SVTImpute = function(x, lambda, verbose=F) {
   ))
 }
 
+#' CV for SVTImpute
+#'
+#' Cross Validation for SVT Imputation
+#' Artificially erase some data and run SVTImpute multiple times,
+#' varying lambda using lambda.range.  For each lambda, compute the
+#' RMSE on the subset of x for which data was artificially erased.
+#' @param x a data frame or matrix where each row represents a different record
+#' @param lambda.range a vector of penalty terms to use in the CV
+#' @export
 cv.SVTImpute = function(x, lambda.range = seq(0,1,length.out=101)) {
   prelim = cv.impute.prelim(x)
   remove.indices = prelim$remove.indices

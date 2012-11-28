@@ -1,4 +1,18 @@
-kNNImpute = function(x, k, x.dist = NULL, pdist = T, impute.fn = mean, verbose=T) {
+#' kNN Impute
+#'
+#' Imputation using k-nearest neighbors
+#' For each record, identify missinng features.  For each missing feature
+#' find the k nearest neighbors which have that feature.  Impute the missing
+#' value using the imputation function on the k-length vector of values
+#' found from the neighbors
+#' @param x a data frame or matrix where each row represents a different record
+#' @param k the number of neighbors to use for imputation
+#' @param x.dist an optional, pre-computed distance matrix to be used for kNN
+#' @param impute.fn the imputation function to run on the length k vector of values for
+#'   a missing feature
+#' @param verbose if TRUE print status updates
+#' @export
+kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, ..., verbose=T) {
   if(k >= nrow(x))
     stop("k must be less than the number of rows in x")
 
@@ -9,7 +23,7 @@ kNNImpute = function(x, k, x.dist = NULL, pdist = T, impute.fn = mean, verbose=T
   missing.rows.indices = prelim$missing.rows.indices
 
   if (verbose) print("Computing distance matrix...")
-  if (is.null(x.dist) & !pdist) x.dist = dist(x)
+  if (is.null(x.dist)) x.dist = dist(x)
   if (verbose) print("Distance matrix complete")
   
   x.missing.imputed = t(apply(x.missing, 1, function(i) {
@@ -33,7 +47,7 @@ kNNImpute = function(x, k, x.dist = NULL, pdist = T, impute.fn = mean, verbose=T
                           indices.B = neighbor.indices)$dist)
       #identify the row number in the original data matrix of the knn
       knn = neighbor.indices[(knn.ranks[1:k])]
-      impute.fn(x[knn,j])
+      impute.fn(x[knn,j], ...)
     })
     i.original[missing.cols] = imputed.values
     i.original
@@ -49,6 +63,15 @@ kNNImpute = function(x, k, x.dist = NULL, pdist = T, impute.fn = mean, verbose=T
   ))
 }
 
+#' CV for kNNImpute
+#'
+#' Cross Validation for kNNImpute
+#' Artificially erase some data and run kNNImpute multiple times,
+#' varying k from 1 to k.max.  For each k, compute the RMSE on the subset of x
+#' for which data was artificially erased.
+#' @param x a data frame or matrix where each row represents a different record
+#' @param k.max the largest amount of neighbors to try kNN Impute
+#' @export
 cv.kNNImpute = function(x, k.max=5) {
   if(k.max >= nrow(x)) stop("k.max must be less than nrow(x)")
 

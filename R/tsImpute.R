@@ -1,3 +1,8 @@
+.hasTimestamp = function(x) {
+  classes = sapply(x[1,], class)
+  which(classes %in% c("POSIXt", "POSIXlt", "POSIXct", "date"))
+}
+
 projection.time = function(timestamps) {
   year = year(timestamps)
   month = month(timestamps)

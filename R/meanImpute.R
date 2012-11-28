@@ -1,3 +1,7 @@
+#' Mean Imputation
+#' Fill missing values in a column with the mean of the column
+#' @param x a data frame or matrix where each row represents a different record
+#' @export
 meanImpute = function(x) {
   prelim = impute.prelim(x)
   if (prelim$numMissing == 0) return (x)
@@ -15,6 +19,13 @@ meanImpute = function(x) {
 
 }
 
+#' CV for meanImpute
+#'
+#' Cross Validation for mean Imputation
+#' Artificially erase some data and run meanImpute compute the RMSE on 
+#' the subset of x for which data was artificially erased.
+#' @param x a data frame or matrix where each row represents a different record
+#' @export
 cv.meanImpute = function(x) {
   prelim = cv.impute.prelim(x)
   remove.indices = prelim$remove.indices

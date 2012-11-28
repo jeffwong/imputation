@@ -1,8 +1,18 @@
-.hasTimestamp = function(x) {
-  classes = sapply(x[1,], class)
-  which(classes %in% c("POSIXt", "POSIXlt", "POSIXct", "date"))
-}
-
+#' GBM Imputation
+#'
+#' Imputation using Boosted Trees
+#' Fill each column by treating it as a regression problem.  For each
+#' column i, use boosted regression trees to predict i using all other
+#' columns except i.  If the predictor variables also contain missing data,
+#' the gbm function will itself use surrogate variables as substitutes for the predictors.
+#' This imputation function can handle both categorical and numeric data.
+#' @param x a data frame or matrix where each row is a different record
+#' @param max.iters number of times to iterate through the columns and
+#'   impute each column with fitted values from a regression tree
+#' @param cv.fold number of folds that gbm should use internally for cross validation
+#' @param n.trees the number of trees used in gradient boosting machines
+#' @param verbose if TRUE print status updates
+#' @export
 gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose=T, ...) {
   prelim = impute.prelim(x,byrow = F)
   if (prelim$numMissing == 0) return (x)
@@ -52,6 +62,14 @@ gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose=T, ..
   ))
 }
 
+#' CV for gbmImpute
+#'
+#' Cross Validation for GBM Imputation
+#' Artificially erase some data and run gbmImpute.  Compute the RMSE
+#' on the subset of x for which data was artificially erased.
+#' @param x a data frame or matrix where each row represents a different record
+#' @param ... extra parameters to be passed to gbmImpute
+#' @export
 cv.gbmImpute = function(x, ...) {
   prelim = cv.impute.prelim(x)
   remove.indices = prelim$remove.indices

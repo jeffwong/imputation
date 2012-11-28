@@ -1,52 +1,29 @@
 \name{kNNImpute}
 \alias{kNNImpute}
-\title{
-k-NN Imputation
-}
-\description{
-Imputation using k nearest neighbors
-}
+\title{kNN Impute}
 \usage{
-kNNImpute(x, k, verbose=T)
+  kNNImpute(x, k, x.dist = NULL, impute.fn = mean, ...,
+    verbose = T)
 }
 \arguments{
-  \item{x}{
-Numeric data matrix containing missing values
+  \item{x}{a data frame or matrix where each row represents
+  a different record}
+
+  \item{k}{the number of neighbors to use for imputation}
+
+  \item{x.dist}{an optional, pre-computed distance matrix
+  to be used for kNN}
+
+  \item{impute.fn}{the imputation function to run on the
+  length k vector of values for a missing feature}
+
+  \item{verbose}{if TRUE print status updates}
 }
-  \item{k}{
-The number of neighbors to use for k-NN
-}
-  \item{verbose}{
-Logical.  If true, print updates about the status of kNNImpute
-}
-}
-\details{
-Identifies observations, x, that have missing data.  If column j of observation 
-x is missing, finds the k nearest observations to x that have non-missing 
-values in j.  Among this set, use the mean of j to fill the missing value in x.
-Reports warnings if an entire row is missing.
-}
-\value{
-\item{x }{The imputed data matrix}
-\item{missing.matrix }{A matrix of logicals displaying the location of the original missing values}
-}
-\references{
-}
-\author{
-Jeffrey Wong
-}
-\note{
+\description{
+  Imputation using k-nearest neighbors For each record,
+  identify missinng features.  For each missing feature
+  find the k nearest neighbors which have that feature.
+  Impute the missing value using the imputation function on
+  the k-length vector of values found from the neighbors
 }
 
-\seealso{
-SVDImpute, SVTImpute
-}
-\examples{
-x = matrix(rnorm(30),10,3)
-x[2,3] = NA
-x[5,1] = NA
-x[2,2] = NA
-x.imputed = kNNImpute(x,2)
-}
-\keyword{ k-NN }
-\keyword{ impute }

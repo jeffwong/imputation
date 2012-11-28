@@ -1,4 +1,13 @@
-#' used for panel data in the wide format
+#' Persistence Imputation
+#'
+#' Imputation by filling missing values with the nearest known value in time.
+#' Each row of x is one period, missing values are filled by searching within
+#' the row and finding the nearest column which has data.
+#' Used for panel data in the wide format
+#' @param x a data frame or matrix where each row contains one period's worth
+#'   of measurements and columns represent times of that period
+#' @param verbose if TRUE print status updates
+#' @export 
 persistenceImpute = function(x, verbose=T) {
 
     prelim = impute.prelim(x)
@@ -31,6 +40,14 @@ persistenceImpute = function(x, verbose=T) {
     ))
 }
 
+#' CV for persistenceImpute
+#'
+#' Cross Validation for persistence Imputation
+#' Artificially erase some data and run persistenceImpute.  Compute the RMSE
+#' on the subset of x for which data was artificially erased.
+#' @param x a data frame or matrix where each row represents a different period
+#'   and columns represent different times of that period
+#' @export
 cv.persistenceImpute = function(x) {
   prelim = cv.impute.prelim(x)
   remove.indices = prelim$remove.indices
