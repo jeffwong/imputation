@@ -17,7 +17,7 @@ getSVTImpute = function(x) {
 }
 
 getKNNImpute = function(x) {
-    kNNImpute(x, k = 3, pdist = T, verbose = F)$x
+    kNNImpute(x, k = 3, verbose = F)$x
 }
 
 getgbmImpute = function(x) {

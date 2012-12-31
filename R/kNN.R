@@ -44,7 +44,7 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, ..., verbose=T) {
       }
       else
         knn.ranks = order(pdist(x, indices.A = rowIndex,
-                          indices.B = neighbor.indices)$dist)
+                          indices.B = neighbor.indices)@dist)
       #identify the row number in the original data matrix of the knn
       knn = neighbor.indices[(knn.ranks[1:k])]
       impute.fn(x[knn,j], ...)
@@ -89,6 +89,13 @@ cv.kNNImpute = function(x, k.max=5) {
        k.full = 1:k.max, rmse.full = rmse)
 }
 
+#' 2D indices to 1D indices
+#'
+#' Helper function to convert 2D indices to 1D indices.
+#' The return value of the function dist does not by default return a
+#' 2D object, instead it returns an array.  When wanting to access an
+#' element at the i,jth position of the distance matrix, this function
+#' converts the 2D index to a 1D index that can be used on the distance array
 .dist.2dto1d = function(i,j,n) {
   ret = rep(0, length(j))
   j.larger.indices = which(j > i)
