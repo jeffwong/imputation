@@ -2,7 +2,7 @@
 \alias{cv.kNNImpute}
 \title{CV for kNNImpute}
 \usage{
-  cv.kNNImpute(x, k.max = 5)
+  cv.kNNImpute(x, k.max = 5, parallel = F)
 }
 \arguments{
   \item{x}{a data frame or matrix where each row represents
@@ -10,6 +10,9 @@
 
   \item{k.max}{the largest amount of neighbors to try kNN
   Impute}
+
+  \item{parallel}{runs each run for k = 1 to k = k.max in
+  parallel.  Requires a parallel backend to be registered}
 }
 \description{
   Cross Validation for kNNImpute Artificially erase some

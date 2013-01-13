@@ -1,6 +1,6 @@
 #' kNN Impute
 #'
-#' Imputation using k-nearest neighbors
+#' Imputation using k-nearest neighbors.
 #' For each record, identify missinng features.  For each missing feature
 #' find the k nearest neighbors which have that feature.  Impute the missing
 #' value using the imputation function on the k-length vector of values
@@ -9,18 +9,26 @@
 #' @param k the number of neighbors to use for imputation
 #' @param x.dist an optional, pre-computed distance matrix to be used for kNN
 #' @param impute.fn the imputation function to run on the length k vector of values for
-#'   a missing feature
+#'   a missing feature.  Defaults to a weighted mean of the neighboring values weighted
+#'   by the distance of the neighbors
 #' @param verbose if TRUE print status updates
+#' @examples
+#'   x = matrix(rnorm(100),10,10)
+#'   x.missing = x > 2
+#'   x[x.missing] = NA
+#'   kNNImpute(x, 3)
 #' @export
-kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, ..., verbose=T) {
-  if(k >= nrow(x))
-    stop("k must be less than the number of rows in x")
+kNNImpute = function(x, k, x.dist = NULL, impute.fn, ..., verbose=T) {
+  if(k >= nrow(x)) stop("k must be less than the number of rows in x")
 
   prelim = impute.prelim(x)
   if (prelim$numMissing == 0) return (x)
   missing.matrix = prelim$missing.matrix
   x.missing = prelim$x.missing
   missing.rows.indices = prelim$missing.rows.indices
+
+  if (missing(impute.fn)) 
+    impute.fn = function(values, distances) weighted.mean(values, 1 / distances)
 
   if (verbose) print("Computing distance matrix...")
   if (is.null(x.dist)) x.dist = dist(x)
@@ -40,20 +48,21 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, ..., verbose=T) {
       #order the neighbors to find the closest ones
       if (!is.null(x.dist)) {
         indices.1d = .dist.2dto1d(rowIndex, neighbor.indices, nrow(x))
-        knn.ranks = order(x.dist[indices.1d])
+        knn.dist = x.dist[indices.1d]
       }
-      else
-        knn.ranks = order(pdist(x, indices.A = rowIndex,
-                          indices.B = neighbor.indices)@dist)
+      else knn.dist = pdist(x, indices.A = rowIndex,
+                            indices.B = neighbor.indices)@dist
+      knn.ranks = order(knn.dist)
       #identify the row number in the original data matrix of the knn
       knn = neighbor.indices[(knn.ranks[1:k])]
-      impute.fn(x[knn,j], ...)
+      impute.fn(x[knn,j], knn.dist[knn.ranks][1:k], ...)
     })
     i.original[missing.cols] = imputed.values
     i.original
   }))
   x[missing.rows.indices,] = x.missing.imputed
 
+  #Things that were not able to be imputed are set to 0
   missing.matrix2 = is.na(x)
   x[missing.matrix2] = 0
 
@@ -71,8 +80,10 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn = mean, ..., verbose=T) {
 #' for which data was artificially erased.
 #' @param x a data frame or matrix where each row represents a different record
 #' @param k.max the largest amount of neighbors to try kNN Impute
+#' @param parallel runs each run for k = 1 to k = k.max in parallel.  Requires
+#'   a parallel backend to be registered
 #' @export
-cv.kNNImpute = function(x, k.max=5) {
+cv.kNNImpute = function(x, k.max=5, parallel = F) {
   if(k.max >= nrow(x)) stop("k.max must be less than nrow(x)")
 
   prelim = cv.impute.prelim(x)
@@ -80,11 +91,20 @@ cv.kNNImpute = function(x, k.max=5) {
   x.train = prelim$x.train
 
   x.dist = dist(x)
-  rmse = sapply(1:k.max, function(i) {
-    x.imputed = kNNImpute(x.train, i, x.dist, verbose=F)$x
-    error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
-    sqrt(mean(error^2))
-  })
+  if (parallel) {
+    rmse = foreach (i=1:k.max, .combine = unlist, .packages = c('imputation')) %dopar% {
+      x.imputed = kNNImpute(x.train, i, x.dist, verbose=F)$x
+      error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
+      sqrt(mean(error^2))
+    }
+  }
+  else {
+    rmse = sapply(1:k.max, function(i) {
+      x.imputed = kNNImpute(x.train, i, x.dist, verbose=F)$x
+      error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
+      sqrt(mean(error^2))
+    })
+  }
   list(k = which.min(rmse), rmse = rmse[which.min(rmse)],
        k.full = 1:k.max, rmse.full = rmse)
 }
