@@ -19,11 +19,6 @@ gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose=T, ..
   missing.matrix = prelim$missing.matrix
   missing.cols.indices = prelim$missing.cols.indices
  
-  timestampIndex = .hasTimestamp(x)
-  if (length(timestampIndex) > 0) {
-    x = cbind(x, projection.time(x[,timestampIndex]))
-  }
-
   if (verbose) print(paste("Training over:", length(missing.cols.indices), "features"))
   for (i in 1:max.iters) {
     if (verbose) print (paste("Begin iteration: ", i))
