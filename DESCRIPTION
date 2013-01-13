@@ -11,9 +11,12 @@ License: GPL
 LazyLoad: yes
 Depends:
     robustbase,
-    pdist,
     gbm,
     TimeProjection,
+    locfit,
+    splines
+Suggests:
+    pdist,
     foreach,
     parallel
 Collate:
@@ -23,7 +26,5 @@ Collate:
     'gbmImpute.R'
     'kNN.R'
     'meanImpute.R'
-    'persistence.R'
     'robustsvd.R'
-    'tsImpute.R'
     'utils.R'
