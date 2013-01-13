@@ -1,7 +1,7 @@
 Package: imputation
 Type: Package
 Title: imputation
-Version: 1.4
+Version: 1.9.9
 Date: 2012-05-04
 Author: Jeffrey Wong
 Maintainer: Jeffrey Wong <jeff.ct.wong@gmail.com>
@@ -12,7 +12,10 @@ LazyLoad: yes
 Depends:
     robustbase,
     pdist,
-    gbm
+    gbm,
+    TimeProjection,
+    foreach,
+    parallel
 Collate:
     'SVD.R'
     'SVT.R'
