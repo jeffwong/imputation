@@ -72,7 +72,7 @@ SVDImpute = function(x, k, num.iters = 10, gpu=F, verbose=T) {
 #' @param x a data frame or matrix where each row represents a different record
 #' @param k.max the largest rank used to approximate x
 #' @export
-cv.SVDImpute = function(x, k.max=floor(ncol(x)/2)) {
+cv.SVDImpute = function(x, k.max=floor(ncol(x)/2), parallel = F) {
   if(k.max > ncol(x)) {
     stop("Rank-k approximation cannot exceed the number
       of columns of x")
@@ -82,11 +82,20 @@ cv.SVDImpute = function(x, k.max=floor(ncol(x)/2)) {
   remove.indices = prelim$remove.indices
   x.train = prelim$x.train
 
-  rmse = sapply(1:k.max, function(i) {
-    x.imputed = SVDImpute(x.train, i, verbose=F)$x
-    error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
-    sqrt(mean(error^2))
-  })
+  if (parallel) {
+    rmse = foreach (i = 1:k.max, .combine = unlist, .packages = c('imputation')) %dopar% {
+      x.imputed = SVDImpute(x.train, i, verbose=F)$x
+      error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
+      sqrt(mean(error^2))
+    }
+  }
+  else {
+    rmse = sapply(1:k.max, function(i) {
+      x.imputed = SVDImpute(x.train, i, verbose=F)$x
+      error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
+      sqrt(mean(error^2))
+    })
+  }
   list(k = which.min(rmse), rmse = rmse[which.min(rmse)],
        k.full = 1:k.max, rmse.full = rmse)
 }

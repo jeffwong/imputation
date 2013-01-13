@@ -55,16 +55,25 @@ SVTImpute = function(x, lambda, verbose=F) {
 #' @param x a data frame or matrix where each row represents a different record
 #' @param lambda.range a vector of penalty terms to use in the CV
 #' @export
-cv.SVTImpute = function(x, lambda.range = seq(0,1,length.out=101)) {
+cv.SVTImpute = function(x, lambda.range = seq(0,1,length.out=101), parallel = F) {
   prelim = cv.impute.prelim(x)
   remove.indices = prelim$remove.indices
   x.train = prelim$x.train
 
-  rmse = sapply(lambda.range, function(i) {
-    x.imputed = SVTImpute(x.train, i, verbose=F)$x
-    error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
-    sqrt(mean(error^2))
-  })
+  if (parallel) {
+    rmse = foreach (i=1:k.max, .combine = unlist, .packages = c('imputation')) %dopar% {
+      x.imputed = SVTImpute(x.train, i, verbose=F)$x
+      error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
+      sqrt(mean(error^2))
+    }
+  }
+  else {
+    rmse = sapply(lambda.range, function(i) {
+      x.imputed = SVTImpute(x.train, i, verbose=F)$x
+      error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
+      sqrt(mean(error^2))
+    })
+  }
   list(lambda = lambda.range[which.min(rmse)], rmse = rmse[which.min(rmse)],
        lambda.full = lambda.range, rmse.full = rmse)
 }
