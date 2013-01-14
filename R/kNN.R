@@ -4,7 +4,10 @@
 #' For each record, identify missinng features.  For each missing feature
 #' find the k nearest neighbors which have that feature.  Impute the missing
 #' value using the imputation function on the k-length vector of values
-#' found from the neighbors
+#' found from the neighbors.
+#' 
+#' The default impute.fn is implemented as follows:
+#' impute.fn = function(values, distances) weighted.mean(values, 1 / distances)
 #' @param x a data frame or matrix where each row represents a different record
 #' @param k the number of neighbors to use for imputation
 #' @param x.dist an optional, pre-computed distance matrix to be used for kNN
@@ -12,6 +15,7 @@
 #'   a missing feature.  Defaults to a weighted mean of the neighboring values weighted
 #'   by the distance of the neighbors
 #' @param verbose if TRUE print status updates
+#' @references Missing value estimation methods for DNA microarrays.  Troyanskaya et al.
 #' @examples
 #'   x = matrix(rnorm(100),10,10)
 #'   x.missing = x > 2

@@ -6,6 +6,9 @@ to fill in missing values of a dataset with the best guess.  Recently, it was po
 where a matrix of Netflix users and their movie ratings were presented to the data science community to see
 if algorithms could be developed to predict how a user would rate a certain movie that the user has not yet seen.
 
+References:
+* Missing value estimation methods for DNA microarrays.  Troyanskaya, et al.
+
 ##Imputation Algorithms Presented
 
 * Mean Imputation
@@ -14,9 +17,10 @@ if algorithms could be developed to predict how a user would rate a certain movi
 * Robust SVD Imputation
 * SVT Imputation
 * Boosted Trees Imputation
-* Persistence
+* Locally weighted least squares
 
 ##Algorithm Design
+
 Each function in this package includes the imputation algorithm as well as a cross validatiion algorithm.  The CV
 algorithm artificially eliminates 1/3 of the data in a dataset, and runs the imputation function.  Using the completed
 data, the RMSE is calculated on the portion of the data that was artificially removed only.  Different imputation
