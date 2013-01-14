@@ -1,7 +1,6 @@
 \name{meanImpute}
 \alias{meanImpute}
-\title{Mean Imputation
-Fill missing values in a column with the mean of the column}
+\title{Mean Imputation}
 \usage{
   meanImpute(x)
 }
@@ -10,7 +9,7 @@ Fill missing values in a column with the mean of the column}
   a different record}
 }
 \description{
-  Mean Imputation Fill missing values in a column with the
-  mean of the column
+  Fill missing values in a column with the mean of the
+  column
 }
 

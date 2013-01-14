@@ -26,12 +26,21 @@
   identify missinng features.  For each missing feature
   find the k nearest neighbors which have that feature.
   Impute the missing value using the imputation function on
-  the k-length vector of values found from the neighbors
+  the k-length vector of values found from the neighbors.
+}
+\details{
+  The default impute.fn is implemented as follows:
+  impute.fn = function(values, distances)
+  weighted.mean(values, 1 / distances)
 }
 \examples{
 x = matrix(rnorm(100),10,10)
   x.missing = x > 2
   x[x.missing] = NA
   kNNImpute(x, 3)
+}
+\references{
+  Missing value estimation methods for DNA microarrays.
+  Troyanskaya et al.
 }
 

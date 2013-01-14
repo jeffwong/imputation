@@ -2,7 +2,7 @@ Package: imputation
 Type: Package
 Title: imputation
 Version: 1.9.9
-Date: 2012-05-04
+Date: 2013-01-13
 Author: Jeffrey Wong
 Maintainer: Jeffrey Wong <jeff.ct.wong@gmail.com>
 Description: Fill missing values in a data matrix
@@ -28,3 +28,5 @@ Collate:
     'meanImpute.R'
     'robustsvd.R'
     'utils.R'
+    'lmImpute.R'
+    'tsImpute.R'

@@ -2,7 +2,8 @@
 \alias{cv.robustSVDImpute}
 \title{CV for robustSVDImpute}
 \usage{
-  cv.robustSVDImpute(x, k.max = floor(ncol(x)/2))
+  cv.robustSVDImpute(x, k.max = floor(ncol(x)/2),
+    parallel = T)
 }
 \arguments{
   \item{x}{a data frame or matrix where each row represents

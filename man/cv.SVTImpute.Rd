@@ -3,7 +3,8 @@
 \title{CV for SVTImpute}
 \usage{
   cv.SVTImpute(x,
-    lambda.range = seq(0, 1, length.out = 101))
+    lambda.range = seq(0, 1, length.out = 101),
+    parallel = F)
 }
 \arguments{
   \item{x}{a data frame or matrix where each row represents

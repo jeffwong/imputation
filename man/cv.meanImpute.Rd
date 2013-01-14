@@ -10,7 +10,7 @@
 }
 \description{
   Cross Validation for mean Imputation Artificially erase
-  some data and run meanImpute compute the RMSE on the
+  some data and run meanImpute to compute the RMSE on the
   subset of x for which data was artificially erased.
 }
 

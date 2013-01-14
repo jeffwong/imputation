@@ -2,7 +2,7 @@
 \alias{cv.SVDImpute}
 \title{CV for SVDImpute}
 \usage{
-  cv.SVDImpute(x, k.max = floor(ncol(x)/2))
+  cv.SVDImpute(x, k.max = floor(ncol(x)/2), parallel = F)
 }
 \arguments{
   \item{x}{a data frame or matrix where each row represents
