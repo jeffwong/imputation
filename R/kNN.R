@@ -7,7 +7,12 @@
 #' found from the neighbors.
 #' 
 #' The default impute.fn is implemented as follows:
-#' impute.fn = function(values, distances) weighted.mean(values, 1 / distances)
+#' impute.fn = function(values, distances, k, ...) {
+#'   ranks = order(distances)
+#'   knn.values = values[order(ranks)][1:k]
+#'   knn.weights = 1 - (distances[ranks] / max(distances)) [1:k]
+#'   weighted.mean(knn.values, knn.weights)
+#' }
 #' @param x a data frame or matrix where each row represents a different record
 #' @param k the number of neighbors to use for imputation
 #' @param x.dist an optional, pre-computed distance matrix to be used for kNN
@@ -32,7 +37,12 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn, ..., verbose=T) {
   missing.rows.indices = prelim$missing.rows.indices
 
   if (missing(impute.fn)) 
-    impute.fn = function(values, distances) weighted.mean(values, 1 / distances)
+    impute.fn = function(values, distances, k, ...) {
+      ranks = order(distances)
+      knn.values = values[order(ranks)][1:k]
+      knn.weights = 1 - (distances[ranks] / max(distances)) [1:k]
+      weighted.mean(knn.values, knn.weights)
+    }
 
   if (verbose) print("Computing distance matrix...")
   if (is.null(x.dist)) x.dist = dist(x)
@@ -56,10 +66,7 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn, ..., verbose=T) {
       }
       else knn.dist = pdist(x, indices.A = rowIndex,
                             indices.B = neighbor.indices)@dist
-      knn.ranks = order(knn.dist)
-      #identify the row number in the original data matrix of the knn
-      knn = neighbor.indices[(knn.ranks[1:k])]
-      impute.fn(x[knn,j], knn.dist[knn.ranks][1:k], ...)
+      impute.fn(x[neighbor.indices,j], knn.dist, k, ...)
     })
     i.original[missing.cols] = imputed.values
     i.original

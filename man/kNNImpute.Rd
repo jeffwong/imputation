@@ -30,8 +30,10 @@
 }
 \details{
   The default impute.fn is implemented as follows:
-  impute.fn = function(values, distances)
-  weighted.mean(values, 1 / distances)
+  impute.fn = function(values, distances, k, ...) { ranks =
+  order(distances) knn.values = values[order(ranks)][1:k]
+  knn.weights = 1 - (distances[ranks] / max(distances))
+  [1:k] weighted.mean(knn.values, knn.weights) }
 }
 \examples{
 x = matrix(rnorm(100),10,10)
