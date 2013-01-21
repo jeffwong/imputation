@@ -16,10 +16,10 @@
 #' @param verbose if TRUE print status updates
 #' @export
 tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
-                    n.trees = 100, verbose=T, ...) {
+                    n.trees = 100, verbose = T, ...) {
   time.projection = projectDate(time)
   fixed = cbind(time.projection, dimension)
-  prelim = impute.prelim(metric,byrow = F)
+  prelim = impute.prelim(metric, byrow = F)
   if (prelim$numMissing == 0) return (metric)
   missing.matrix = prelim$missing.matrix
   missing.cols.indices = prelim$missing.cols.indices
@@ -34,7 +34,7 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
       else good.data = 1:nrow(metric)
       bad.data = which(missing.matrix[,j])
       gbm1 <- gbm(metric[good.data,j] ~ .,
-                  data = as.data.frame(cbind(fixed, metric[good.data,-j])),
+                  data = as.data.frame(cbind(fixed[good.data,], metric[good.data,-j])),
                   var.monotone = rep(0, ncol(x)-1), # -1: monotone decrease,
                   # +1: monotone increase,
                   #  0: no monotone restrictions
@@ -52,9 +52,11 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
                   keep.data=TRUE,              # keep a copy of the dataset with the object
                   verbose=T)                # print out progress
       best.iter <- gbm.perf(gbm1,method="OOB", plot.it = F)
-      data.predict = predict(gbm1, newdata = as.data.frame(x[bad.data,-j]), n.trees = best.iter)
-      x[bad.data,j] = data.predict
-      x[,j]
+      data.predict = predict(gbm1,
+                             newdata = as.data.frame(cbind(fixed[bad.data,], metric[bad.data,-j])),
+                             n.trees = best.iter)
+      metric[bad.data,j] = data.predict
+      metric[,j]
     })
   }
   
