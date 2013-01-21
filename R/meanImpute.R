@@ -12,7 +12,7 @@ meanImpute = function(x) {
   x.imputed = apply(x.missing, 2, function(j) {
       bad.indices = which(is.na(j))
       j[bad.indices] = mean(j[-1], na.rm = T)
-      j
+      j[-1]
   })
   x[,prelim$missing.cols.indices] = x.imputed
   
