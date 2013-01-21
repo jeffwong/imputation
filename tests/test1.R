@@ -24,17 +24,13 @@ getgbmImpute = function(x) {
     gbmImpute(x, max.iters = 1, verbose = T)$x
 }
 
-getPersistenceImpute = function(x) {
-    persistenceImpute(x, verbose = F)$x
+getMeanImpute = function(x) {
+    meanImpute(x)$x
 }
 
-getMeanImpute = function(x) {
-    apply(x, 2, function(j) {
-        bad.indices = which(is.na(j))
-        j[bad.indices] = mean(j, na.rm = T)
-        j
-    })
-}
+getLmImpute = function(x) {
+    lmImpute(x)$x
+}   
 
 #RANDOM DATA IMPUTATION
 
@@ -92,11 +88,6 @@ system.time(imputation.benchmark.ts(imputation.fn = getKNNImpute,
 
 set.seed(100)
 system.time(imputation.benchmark.ts(imputation.fn = getgbmImpute,
-                                    numTS = 1000, TSlength = 10,
-                                    numMissing = 500))
-
-set.seed(100)
-system.time(imputation.benchmark.ts(imputation.fn = getPersistenceImpute,
                                     numTS = 1000, TSlength = 10,
                                     numMissing = 500))
 
