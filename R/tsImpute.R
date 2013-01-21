@@ -30,7 +30,9 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
     metric[,missing.cols.indices] = sapply(missing.cols.indices, function(j) {
       if (verbose) print(paste("Imputing on feature: ", j))
       #response variable in gbm cannot contain missing data
-      good.data = which(!missing.matrix[,j])
+      if (i == 1) good.data = which(!missing.matrix[,j])
+      else good.data = 1:nrow(metric)
+      bad.data = which(missing.matrix[,j])
       gbm1 <- gbm(metric[good.data,j] ~ .,
                   data = as.data.frame(cbind(fixed, metric[good.data,-j])),
                   var.monotone = rep(0, ncol(x)-1), # -1: monotone decrease,
@@ -50,8 +52,8 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
                   keep.data=TRUE,              # keep a copy of the dataset with the object
                   verbose=T)                # print out progress
       best.iter <- gbm.perf(gbm1,method="OOB", plot.it = F)
-      data.predict = predict(gbm1, newdata = as.data.frame(x[-good.data,-j]), n.trees = best.iter)
-      x[-good.data,j] = data.predict
+      data.predict = predict(gbm1, newdata = as.data.frame(x[bad.data,-j]), n.trees = best.iter)
+      x[bad.data,j] = data.predict
       x[,j]
     })
   }
