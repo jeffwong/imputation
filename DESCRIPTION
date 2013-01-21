@@ -6,7 +6,7 @@ Date: 2013-01-13
 Author: Jeffrey Wong
 Maintainer: Jeffrey Wong <jeff.ct.wong@gmail.com>
 Description: Fill missing values in a data matrix
-    using SVD, SVT, or kNN imputation.
+    using mean, kNN, SVD, tree, or linear imputation,.
 License: GPL
 LazyLoad: yes
 Depends:
