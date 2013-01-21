@@ -13,8 +13,8 @@
 #' @param n.trees the number of trees used in gradient boosting machines
 #' @param verbose if TRUE print status updates
 #' @export
-gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose=T, ...) {
-  prelim = impute.prelim(x,byrow = F)
+gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T, ...) {
+  prelim = impute.prelim(x, byrow = F)
   if (prelim$numMissing == 0) return (x)
   missing.matrix = prelim$missing.matrix
   missing.cols.indices = prelim$missing.cols.indices
