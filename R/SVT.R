@@ -54,6 +54,8 @@ SVTImpute = function(x, lambda, verbose=F) {
 #' RMSE on the subset of x for which data was artificially erased.
 #' @param x a data frame or matrix where each row represents a different record
 #' @param lambda.range a vector of penalty terms to use in the CV
+#' @param parallel runs each run for lambda in lambda.range in parallel.  Requires
+#'   a parallel backend to be registered
 #' @export
 cv.SVTImpute = function(x, lambda.range = seq(0,1,length.out=101), parallel = F) {
   prelim = cv.impute.prelim(x)
@@ -61,7 +63,7 @@ cv.SVTImpute = function(x, lambda.range = seq(0,1,length.out=101), parallel = F)
   x.train = prelim$x.train
 
   if (parallel) {
-    rmse = foreach (i=1:k.max, .combine = unlist, .packages = c('imputation')) %dopar% {
+    rmse = foreach (i=lambda.range, .combine = c, .packages = c('imputation')) %dopar% {
       x.imputed = SVTImpute(x.train, i, verbose=F)$x
       error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
       sqrt(mean(error^2))

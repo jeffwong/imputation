@@ -14,6 +14,7 @@
 #' @param cv.fold number of folds that gbm should use internally for cross validation
 #' @param n.trees the number of trees used in gradient boosting machines
 #' @param verbose if TRUE print status updates
+#' @param ... additional params passed to gbm
 #' @export
 tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
                     n.trees = 100, verbose = T, ...) {
@@ -50,7 +51,8 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
                   n.minobsinnode = 10,         # minimum total weight needed in each node
                   cv.folds = cv.fold,                # do 5-fold cross-validation
                   keep.data=TRUE,              # keep a copy of the dataset with the object
-                  verbose=T)                # print out progress
+                  verbose=T,
+                  ...)                # print out progress
       best.iter <- gbm.perf(gbm1,method="OOB", plot.it = F)
       data.predict = predict(gbm1,
                              newdata = as.data.frame(cbind(fixed[bad.data,], metric[bad.data,-j])),
@@ -71,19 +73,21 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
 #' Cross Validation for Time Series Imputation
 #' Artificially erase some data and run gbmImpute.  Compute the RMSE
 #' on the subset of x for which data was artificially erased.
-#' @param x a data frame or matrix where each row represents a different record
-#' @param ... extra parameters to be passed to gbmImpute
+#' @param time a vector of dates or datetime objects
+#' @param dimension a data frame of exogenous predictor variables
+#' @param metric a matrix where each column represents a time series
+#' @param ... extra parameters to be passed to tsImpute
 #' @export
-cv.gbmImpute = function(date, dimension, metric, ...) {
+cv.tsImpute = function(time, dimension, metric, ...) {
   prelim = cv.impute.prelim(metric)
   remove.indices = prelim$remove.indices
   metric.train = prelim$x.train
-  date.train = date[-remove.indices]
+  time.train = time[-remove.indices]
   dimension.train = dimension[-remove.indices,]
 
-  metric.imputed = tsImpute(date.train, dimension.train, metric.train, verbose=F, ...)$x
+  metric.imputed = tsImpute(time.train, dimension.train, metric.train, verbose=F, ...)$x
   error = (metric[remove.indices] - metric.imputed[remove.indices]) / metric[remove.indices]
   rmse = sqrt(mean(error^2))
   
-  list(imputation = x.imputed, rmse = rmse)
+  list(imputation = metric.imputed, rmse = rmse)
 }

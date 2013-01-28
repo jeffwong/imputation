@@ -47,6 +47,8 @@ robustSVDImpute = function(x, k, alpha = 1/2, max.iters = 10, verbose = T ) {
 #' for which data was artificially erased.
 #' @param x a data frame or matrix where each row represents a different record
 #' @param k.max the largest rank used to approximate x
+#' @param parallel runs each run for k = 1 to k = k.max in parallel.  Requires
+#'   a parallel backend to be registered
 #' @export
 cv.robustSVDImpute = function(x, k.max=floor(ncol(x)/2), parallel = T) {
   prelim = cv.impute.prelim(x)
@@ -54,7 +56,7 @@ cv.robustSVDImpute = function(x, k.max=floor(ncol(x)/2), parallel = T) {
   x.train = prelim$x.train
 
   if (parallel) {
-    rmse = foreach (i=1:k.max, .combine = unlist, .packages = c('imputation')) %dopar% {
+    rmse = foreach (i=1:k.max, .combine = c, .packages = c('imputation')) %dopar% {
       x.imputed = robustSVDImpute(x.train, i, verbose=F)$x
       error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
       sqrt(mean(error^2))

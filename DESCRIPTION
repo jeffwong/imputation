@@ -22,7 +22,6 @@ Suggests:
 Collate:
     'SVD.R'
     'SVT.R'
-    'benchmark.R'
     'gbmImpute.R'
     'kNN.R'
     'meanImpute.R'

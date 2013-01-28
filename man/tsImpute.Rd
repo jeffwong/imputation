@@ -25,6 +25,8 @@
   boosting machines}
 
   \item{verbose}{if TRUE print status updates}
+
+  \item{...}{additional params passed to gbm}
 }
 \description{
   Time Series Imputation using Boosted Trees Fill each

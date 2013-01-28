@@ -9,6 +9,9 @@
   a different record}
 
   \item{k.max}{the largest rank used to approximate x}
+
+  \item{parallel}{runs each run for k = 1 to k = k.max in
+  parallel.  Requires a parallel backend to be registered}
 }
 \description{
   Cross Validation for SVD Imputation Artificially erase

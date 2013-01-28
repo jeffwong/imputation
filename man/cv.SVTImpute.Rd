@@ -12,6 +12,10 @@
 
   \item{lambda.range}{a vector of penalty terms to use in
   the CV}
+
+  \item{parallel}{runs each run for lambda in lambda.range
+  in parallel.  Requires a parallel backend to be
+  registered}
 }
 \description{
   Cross Validation for SVT Imputation Artificially erase

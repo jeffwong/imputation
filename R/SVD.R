@@ -1,12 +1,5 @@
-#use rank k svd approximation of x
-#if x is large, set gpu=T to use CUDA accelerated svd function
-.rankKapprox = function(x, k, gpu) {
-  if(gpu) {
-    x.svd = gpuSvd(x, nu=nrow(x),nv=ncol(x))
-  }
-  else {
-    x.svd = svd(x, nu=k, nv=k)
-  }
+.rankKapprox = function(x, k) {
+  x.svd = svd(x, nu=k, nv=k)
   x.svd$u %*% diag(x.svd$d[1:k],nrow=k,ncol=k) %*% t(x.svd$v)
 }
 
@@ -22,15 +15,9 @@
 #' @param k the rank-k approximation to use for x
 #' @param num.iters the number of times to compute the rank-k approximation
 #'   and impute the missing data
-#' @param gpu if TRUE use a gpu implementation of SVD provided by the R package
-#'   gputools
 #' @param verbose if TRUE print status updates
 #' @export
-SVDImpute = function(x, k, num.iters = 10, gpu=F, verbose=T) {
-  if(gpu) {
-    stop("no gpu support yet")
-  }
-
+SVDImpute = function(x, k, num.iters = 10, verbose=T) {
   prelim = impute.prelim(x, byrow=F)
   if (prelim$numMissing == 0) return (x)
   missing.matrix = prelim$missing.matrix
@@ -54,7 +41,7 @@ SVDImpute = function(x, k, num.iters = 10, gpu=F, verbose=T) {
   x[missing.matrix2] = 0
   for(i in 1:num.iters) {
     if(verbose) print(paste("Running iteration", i, sep=" "))
-    x.svd = .rankKapprox(x, k, gpu)
+    x.svd = .rankKapprox(x, k)
     x[missing.matrix] = x.svd[missing.matrix]
   }
   return ( list (
@@ -71,6 +58,8 @@ SVDImpute = function(x, k, num.iters = 10, gpu=F, verbose=T) {
 #' for which data was artificially erased.
 #' @param x a data frame or matrix where each row represents a different record
 #' @param k.max the largest rank used to approximate x
+#' @param parallel runs each run for k = 1 to k = k.max in parallel.  Requires
+#'   a parallel backend to be registered
 #' @export
 cv.SVDImpute = function(x, k.max=floor(ncol(x)/2), parallel = F) {
   if(k.max > ncol(x)) {
@@ -83,7 +72,7 @@ cv.SVDImpute = function(x, k.max=floor(ncol(x)/2), parallel = F) {
   x.train = prelim$x.train
 
   if (parallel) {
-    rmse = foreach (i = 1:k.max, .combine = unlist, .packages = c('imputation')) %dopar% {
+    rmse = foreach (i = 1:k.max, .combine = c, .packages = c('imputation')) %dopar% {
       x.imputed = SVDImpute(x.train, i, verbose=F)$x
       error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
       sqrt(mean(error^2))

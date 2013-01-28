@@ -6,13 +6,14 @@
 #' value using the imputation function on the k-length vector of values
 #' found from the neighbors.
 #' 
-#' The default impute.fn is implemented as follows:
-#' impute.fn = function(values, distances, k, ...) {
+#' The default impute.fn is weighs the k values by their respective distances.
+#'   It is implemented as follows:
+#' \code{impute.fn = function(values, distances, k) {
 #'   ranks = order(distances)
 #'   knn.values = values[order(ranks)][1:k]
 #'   knn.weights = 1 - (distances[ranks] / max(distances)) [1:k]
 #'   weighted.mean(knn.values, knn.weights)
-#' }
+#' }}
 #' @param x a data frame or matrix where each row represents a different record
 #' @param k the number of neighbors to use for imputation
 #' @param x.dist an optional, pre-computed distance matrix to be used for kNN
@@ -27,7 +28,7 @@
 #'   x[x.missing] = NA
 #'   kNNImpute(x, 3)
 #' @export
-kNNImpute = function(x, k, x.dist = NULL, impute.fn, ..., verbose=T) {
+kNNImpute = function(x, k, x.dist = NULL, impute.fn, verbose=T) {
   if(k >= nrow(x)) stop("k must be less than the number of rows in x")
 
   prelim = impute.prelim(x)
@@ -37,7 +38,7 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn, ..., verbose=T) {
   missing.rows.indices = prelim$missing.rows.indices
 
   if (missing(impute.fn)) 
-    impute.fn = function(values, distances, k, ...) {
+    impute.fn = function(values, distances, k) {
       ranks = order(distances)
       knn.values = values[order(ranks)][1:k]
       knn.weights = 1 - (distances[ranks] / max(distances)) [1:k]
@@ -66,7 +67,7 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn, ..., verbose=T) {
       }
       else knn.dist = pdist(x, indices.A = rowIndex,
                             indices.B = neighbor.indices)@dist
-      impute.fn(x[neighbor.indices,j], knn.dist, k, ...)
+      impute.fn(x[neighbor.indices,j], knn.dist, k)
     })
     i.original[missing.cols] = imputed.values
     i.original
@@ -103,7 +104,7 @@ cv.kNNImpute = function(x, k.max=5, parallel = F) {
 
   x.dist = dist(x)
   if (parallel) {
-    rmse = foreach (i=1:k.max, .combine = unlist, .packages = c('imputation')) %dopar% {
+    rmse = foreach (i=1:k.max, .combine = c, .packages = c('imputation')) %dopar% {
       x.imputed = kNNImpute(x.train, i, x.dist, verbose=F)$x
       error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
       sqrt(mean(error^2))

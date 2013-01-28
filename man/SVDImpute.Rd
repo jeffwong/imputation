@@ -2,7 +2,7 @@
 \alias{SVDImpute}
 \title{SVD Imputation}
 \usage{
-  SVDImpute(x, k, num.iters = 10, gpu = F, verbose = T)
+  SVDImpute(x, k, num.iters = 10, verbose = T)
 }
 \arguments{
   \item{x}{a data frame or matrix where each row represents
@@ -12,9 +12,6 @@
 
   \item{num.iters}{the number of times to compute the
   rank-k approximation and impute the missing data}
-
-  \item{gpu}{if TRUE use a gpu implementation of SVD
-  provided by the R package gputools}
 
   \item{verbose}{if TRUE print status updates}
 }

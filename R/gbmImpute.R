@@ -12,6 +12,7 @@
 #' @param cv.fold number of folds that gbm should use internally for cross validation
 #' @param n.trees the number of trees used in gradient boosting machines
 #' @param verbose if TRUE print status updates
+#' @param ... additional params passed to gbm
 #' @export
 gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T, ...) {
   prelim = impute.prelim(x, byrow = F)
@@ -45,7 +46,8 @@ gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T, 
                   n.minobsinnode = 10,         # minimum total weight needed in each node
                   cv.folds = cv.fold,                # do 5-fold cross-validation
                   keep.data=TRUE,              # keep a copy of the dataset with the object
-                  verbose=T)                # print out progress
+                  verbose=verbose,
+                  ...)                # print out progress
       best.iter <- gbm.perf(gbm1,method="OOB", plot.it = F)
       data.predict = predict(gbm1, newdata = as.data.frame(x[bad.data,-j]), n.trees = best.iter)
       x[bad.data,j] = data.predict
