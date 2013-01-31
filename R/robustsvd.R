@@ -1,3 +1,5 @@
+#This file is deprecated
+
 #' Robust SVD Imputation
 #'
 #' Imputation using a robust implementation of the SVD
@@ -10,7 +12,6 @@
 #' @param alpha the alpha passed into least trimmed squares
 #' @param max.iters the number of times to alternate least trimmed squares
 #' @param verbose if TRUE print status updates
-#' @export
 robustSVDImpute = function(x, k, alpha = 1/2, max.iters = 10, verbose = T ) {
 
     prelim = impute.prelim(x)
@@ -49,7 +50,6 @@ robustSVDImpute = function(x, k, alpha = 1/2, max.iters = 10, verbose = T ) {
 #' @param k.max the largest rank used to approximate x
 #' @param parallel runs each run for k = 1 to k = k.max in parallel.  Requires
 #'   a parallel backend to be registered
-#' @export
 cv.robustSVDImpute = function(x, k.max=floor(ncol(x)/2), parallel = T) {
   prelim = cv.impute.prelim(x)
   remove.indices = prelim$remove.indices

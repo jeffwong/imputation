@@ -2,7 +2,7 @@ Package: imputation
 Type: Package
 Title: imputation
 Version: 1.9.9
-Date: 2013-01-13
+Date: 2013-01-31
 Author: Jeffrey Wong
 Maintainer: Jeffrey Wong <jeff.ct.wong@gmail.com>
 Description: Fill missing values in a data matrix
@@ -18,7 +18,7 @@ Depends:
 Suggests:
     pdist,
     foreach,
-    parallel
+    doParallel
 Collate:
     'SVD.R'
     'SVT.R'
