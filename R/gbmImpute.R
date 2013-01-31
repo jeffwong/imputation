@@ -15,6 +15,7 @@
 #' @param ... additional params passed to gbm
 #' @export
 gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T, ...) {
+  if (nrow(x) < 1000) warning("Tree based imputation works best with larger data (> 1000 obs)")
   prelim = impute.prelim(x, byrow = F)
   if (prelim$numMissing == 0) return (x)
   missing.matrix = prelim$missing.matrix
@@ -41,14 +42,13 @@ gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T, 
                   # 0.001 to 0.1 usually work
                   interaction.depth=3,         # 1: additive model, 2: two-way interactions, etc.
                   bag.fraction = 0.5,          # subsampling fraction, 0.5 is probably best
-                  train.fraction = 0.5,        # fraction of data for training,
-                  # first train.fraction*N used for training
+                  train.fraction = 2/3,        # fraction of data for training,
                   n.minobsinnode = 10,         # minimum total weight needed in each node
                   cv.folds = cv.fold,                # do 5-fold cross-validation
                   keep.data=TRUE,              # keep a copy of the dataset with the object
                   verbose=verbose,
                   ...)                # print out progress
-      best.iter <- gbm.perf(gbm1,method="OOB", plot.it = F)
+      best.iter <- gbm.perf(gbm1,method="test", plot.it = F)
       data.predict = predict(gbm1, newdata = as.data.frame(x[bad.data,-j]), n.trees = best.iter)
       x[bad.data,j] = data.predict
       x[,j]

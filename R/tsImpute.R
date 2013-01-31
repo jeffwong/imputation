@@ -53,7 +53,7 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
                   keep.data=TRUE,              # keep a copy of the dataset with the object
                   verbose=T,
                   ...)                # print out progress
-      best.iter <- gbm.perf(gbm1,method="OOB", plot.it = F)
+      best.iter <- gbm.perf(gbm1,method="test", plot.it = F)
       data.predict = predict(gbm1,
                              newdata = as.data.frame(cbind(fixed[bad.data,], metric[bad.data,-j])),
                              n.trees = best.iter)
