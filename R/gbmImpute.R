@@ -30,8 +30,10 @@ gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T, 
       if (i == 1) good.data = which(!missing.matrix[,j])
       else good.data = 1:nrow(x)
       bad.data = which(missing.matrix[,j])
+      data = x[good.data,-j]
+      if (!is.data.frame(data)) data = data.frame(data = data)
       gbm1 <- gbm(x[good.data,j] ~ .,
-                  data = as.data.frame(x[good.data,-j]),
+                  data = data,
                   var.monotone = rep(0, ncol(x)-1), # -1: monotone decrease,
                   # +1: monotone increase,
                   #  0: no monotone restrictions
@@ -49,7 +51,9 @@ gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T, 
                   verbose=verbose,
                   ...)                # print out progress
       best.iter <- gbm.perf(gbm1,method="test", plot.it = F)
-      data.predict = predict(gbm1, newdata = as.data.frame(x[bad.data,-j]), n.trees = best.iter)
+      newdata = x[bad.data,-j]
+      if (!is.data.frame(newdata)) newdata = data.frame(data = newdata)
+      data.predict = predict(gbm1, newdata = newdata, n.trees = best.iter)
       x[bad.data,j] = data.predict
       x[,j]
     })

@@ -15,6 +15,18 @@
 #' @param n.trees the number of trees used in gradient boosting machines
 #' @param verbose if TRUE print status updates
 #' @param ... additional params passed to gbm
+#' @examples
+#'   dates = timeSequence(from = '2012-01-01', to = '2012-12-31', by = 'day')
+#'   dimensions = sample(c("A", "B"), 366, replace = TRUE)
+#'   numA = length(which(dimensions == "A")); numB = length(which(dimensions == "B"))
+#'   metrics = matrix(0, 366, 2)
+#'   metrics[which(dimensions == "A"),1] = rnorm(numA, mean=1)
+#'   metrics[which(dimensions == "A"),2] = rnorm(numA, mean=5)
+#'   metrics[which(dimensions == "B"),1] = rnorm(numB, mean=-10)
+#'   metrics[which(dimensions == "B"),2] = rnorm(numB, mean=-5)
+#'   tp = projectDate(as.Date(dates))
+#'   monday.indices = which(tp$weekday == "Monday")
+#'   metrics[sample(monday.indices, 20),] = NA
 #' @export
 tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
                     n.trees = 100, verbose = T, ...) {
@@ -35,8 +47,8 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
       else good.data = 1:nrow(metric)
       bad.data = which(missing.matrix[,j])
       gbm1 <- gbm(metric[good.data,j] ~ .,
-                  data = as.data.frame(cbind(fixed[good.data,], metric[good.data,-j])),
-                  var.monotone = rep(0, ncol(x)-1), # -1: monotone decrease,
+                  data = cbind(fixed[good.data,], metrics = metric[good.data,-j]),
+                  var.monotone = rep(0, ncol(metric) - 1 + ncol(fixed)), # -1: monotone decrease,
                   # +1: monotone increase,
                   #  0: no monotone restrictions
                   distribution="gaussian",     # bernoulli, adaboost, gaussian,
@@ -47,7 +59,6 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
                   interaction.depth=3,         # 1: additive model, 2: two-way interactions, etc.
                   bag.fraction = 0.5,          # subsampling fraction, 0.5 is probably best
                   train.fraction = 0.5,        # fraction of data for training,
-                  # first train.fraction*N used for training
                   n.minobsinnode = 10,         # minimum total weight needed in each node
                   cv.folds = cv.fold,                # do 5-fold cross-validation
                   keep.data=TRUE,              # keep a copy of the dataset with the object
@@ -55,7 +66,7 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
                   ...)                # print out progress
       best.iter <- gbm.perf(gbm1,method="test", plot.it = F)
       data.predict = predict(gbm1,
-                             newdata = as.data.frame(cbind(fixed[bad.data,], metric[bad.data,-j])),
+                             newdata = cbind(fixed[bad.data,], metrics = metric[bad.data,-j]),
                              n.trees = best.iter)
       metric[bad.data,j] = data.predict
       metric[,j]
@@ -63,7 +74,7 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
   }
   
   return ( list (
-    x=x,
+    x=metric,
     missing.matrix=missing.matrix
   ))
 }
@@ -82,10 +93,8 @@ cv.tsImpute = function(time, dimension, metric, ...) {
   prelim = cv.impute.prelim(metric)
   remove.indices = prelim$remove.indices
   metric.train = prelim$x.train
-  time.train = time[-remove.indices]
-  dimension.train = dimension[-remove.indices,]
 
-  metric.imputed = tsImpute(time.train, dimension.train, metric.train, verbose=F, ...)$x
+  metric.imputed = tsImpute(time, dimension, metric.train, verbose=F, ...)$x
   error = (metric[remove.indices] - metric.imputed[remove.indices]) / metric[remove.indices]
   rmse = sqrt(mean(error^2))
   
