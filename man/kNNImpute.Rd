@@ -37,7 +37,7 @@
 }
 \examples{
 x = matrix(rnorm(100),10,10)
-  x.missing = x > 2
+  x.missing = x > 1
   x[x.missing] = NA
   kNNImpute(x, 3)
 }
