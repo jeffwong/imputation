@@ -2,11 +2,13 @@
 \alias{lmImpute}
 \title{Locally Weighted Linear Imputation}
 \usage{
-  lmImpute(x)
+  lmImpute(x, ...)
 }
 \arguments{
   \item{x}{a data frame or matrix where each row represents
   a different record}
+
+  \item{...}{additional parameters passed to locfit}
 }
 \description{
   Fill missing values in a column by running a locally

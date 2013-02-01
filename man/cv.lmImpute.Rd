@@ -2,11 +2,13 @@
 \alias{cv.lmImpute}
 \title{CV for lmImpute}
 \usage{
-  cv.lmImpute(x)
+  cv.lmImpute(x, ...)
 }
 \arguments{
   \item{x}{a data frame or matrix where each row represents
   a different record}
+
+  \item{...}{additional parameters passed to locfit}
 }
 \description{
   Cross Validation for Locally Weighted Linear Imputation
