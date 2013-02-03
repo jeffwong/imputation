@@ -109,6 +109,8 @@ cv.kNNImpute = function(x, k.max=5, parallel = F) {
 
   x.dist = dist(x)
   if (parallel) {
+    if (!require(foreach)) stop("R package foreach is required for parallel execution, as well
+                                 as a registered parallel backend")
     rmse = foreach (i=1:k.max, .combine = c, .packages = c('imputation')) %dopar% {
       x.imputed = kNNImpute(x.train, i, x.dist, verbose=F)$x
       error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]

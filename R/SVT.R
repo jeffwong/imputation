@@ -63,6 +63,8 @@ cv.SVTImpute = function(x, lambda.range = seq(0,1,length.out=101), parallel = F)
   x.train = prelim$x.train
 
   if (parallel) {
+    if (!require(foreach)) stop("R package foreach is required for parallel execution, as well
+                                 as a registered parallel backend")
     rmse = foreach (i=lambda.range, .combine = c, .packages = c('imputation')) %dopar% {
       x.imputed = SVTImpute(x.train, i, verbose=F)$x
       error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
