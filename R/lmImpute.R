@@ -30,6 +30,11 @@ lmImpute = function(x, ...) {
 #' the subset of x for which data was artificially erased.
 #' @param x a data frame or matrix where each row represents a different record
 #' @param ... additional parameters passed to locfit
+#' @examples
+#'   x = matrix(rnorm(100),10,10)
+#'   x.missing = x > 1
+#'   x[x.missing] = NA
+#'   cv.lmImpute(x)
 #' @export
 cv.lmImpute = function(x, ...) {
   prelim = cv.impute.prelim(x)

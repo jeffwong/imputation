@@ -60,6 +60,11 @@ SVDImpute = function(x, k, num.iters = 10, verbose=T) {
 #' @param k.max the largest rank used to approximate x
 #' @param parallel runs each run for k = 1 to k = k.max in parallel.  Requires
 #'   a parallel backend to be registered
+#' @examples
+#'   x = matrix(rnorm(100),10,10)
+#'   x.missing = x > 1
+#'   x[x.missing] = NA
+#'   cv.SVDImpute(x)
 #' @export
 cv.SVDImpute = function(x, k.max=floor(ncol(x)/2), parallel = F) {
   if(k.max > ncol(x)) {

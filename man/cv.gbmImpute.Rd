@@ -15,4 +15,10 @@
   some data and run gbmImpute.  Compute the RMSE on the
   subset of x for which data was artificially erased.
 }
+\examples{
+x = matrix(rnorm(100),10,10)
+  x.missing = x > 1
+  x[x.missing] = NA
+  cv.gbmImpute(x)
+}
 

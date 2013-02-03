@@ -72,6 +72,11 @@ gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T, 
 #' on the subset of x for which data was artificially erased.
 #' @param x a data frame or matrix where each row represents a different record
 #' @param ... extra parameters to be passed to gbmImpute
+#' @examples
+#'   x = matrix(rnorm(100),10,10)
+#'   x.missing = x > 1
+#'   x[x.missing] = NA
+#'   cv.gbmImpute(x)
 #' @export
 cv.gbmImpute = function(x, ...) {
   prelim = cv.impute.prelim(x)
