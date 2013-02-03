@@ -7,7 +7,8 @@ where a matrix of Netflix users and their movie ratings were presented to the da
 if algorithms could be developed to predict how a user would rate a certain movie that the user has not yet seen.
 
 References:
-* Missing value estimation methods for DNA microarrays.  Troyanskaya, et al.
+* [Missing value estimation methods for DNA microarrays](http://bioinformatics.oxfordjournals.org/content/17/6/520.full.pdf).  Troyanskaya, et al.
+* [A Singular Value Thresholding Algorithm for Matrix Completion](http://arxiv.org/pdf/0810.3286v1.pdf).  Cai, Candes, Shen.
 
 ##Imputation Algorithms Presented
 
