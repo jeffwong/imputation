@@ -15,7 +15,6 @@ References:
 * Mean Imputation
 * k-Nearest Neighbors 
 * SVD Imputation
-* Robust SVD Imputation
 * SVT Imputation
 * Boosted Trees Imputation
 * Locally weighted least squares
