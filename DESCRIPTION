@@ -30,3 +30,4 @@ Collate:
     'utils.R'
     'lmImpute.R'
     'tsImpute.R'
+    'SVTApprox.R'

@@ -1,10 +1,10 @@
-\name{cv.SVTImpute}
-\alias{cv.SVTImpute}
-\title{CV for SVTImpute}
+\name{cv.SVTApproxImpute}
+\alias{cv.SVTApproxImpute}
+\title{CV for SVTApproxImpute}
 \usage{
-  cv.SVTImpute(x,
+  cv.SVTApproxImpute(x,
     lambda.range = seq(0, 1, length.out = 101),
-    parallel = F, ...)
+    parallel = F)
 }
 \arguments{
   \item{x}{a data frame or matrix where each row represents
@@ -16,8 +16,6 @@
   \item{parallel}{runs each run for lambda in lambda.range
   in parallel.  Requires a parallel backend to be
   registered}
-
-  \item{...}{extra parameters to pass to SVTImpute}
 }
 \description{
   Cross Validation for SVT Imputation Artificially erase

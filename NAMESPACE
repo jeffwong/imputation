@@ -1,6 +1,8 @@
 export(SVDImpute)
+export(SVTApproxImpute)
 export(SVTImpute)
 export(cv.SVDImpute)
+export(cv.SVTApproxImpute)
 export(cv.SVTImpute)
 export(cv.gbmImpute)
 export(cv.kNNImpute)
