@@ -28,12 +28,20 @@
   the k-length vector of values found from the neighbors.
 }
 \details{
-  The default impute.fn is weighs the k values by their
-  respective distances.  It is implemented as follows:
-  \code{impute.fn = function(values, distances, k) { ranks
-  = order(distances) knn.values = values[order(ranks)][1:k]
-  knn.weights = 1 - (distances[ranks] / max(distances))
-  [1:k] weighted.mean(knn.values, knn.weights) }}
+  The default impute.fn weighs the k values by their
+  respective distances.  First the smallest k distances are
+  extracted into the variable smallest.distances Then, the
+  corresponding values are extracted to knn.values.
+  Finally, knn.weights normalizes the distances by the max
+  distance, and are subtracted by 1.  The result is the
+  weighted mean of the values of the nearest neighbors and
+  their weight based on their distance.  It is implemented
+  as follows: \code{impute.fn = function(values, distances,
+  k) { ranks = order(distances) smallest.distances =
+  distances[ranks][1:k] #values corresponding to smallest
+  distances knn.values = values[ranks][1:k] knn.weights = 1
+  - (smallest.distances / max(distances))
+  weighted.mean(knn.values, knn.weights) }}
 }
 \examples{
 x = matrix(rnorm(100),10,10)
