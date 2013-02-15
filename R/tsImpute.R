@@ -27,7 +27,7 @@
 #'   tp = projectDate(as.Date(dates))
 #'   monday.indices = which(tp$weekday == "Monday")
 #'   metrics[sample(monday.indices, 20),] = NA
-#'   cv.tsImpute(dates, dimensions, metrics)
+#'   tsImpute(as.Date(dates), dimensions, metrics)
 #' @export
 tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
                     n.trees = 100, verbose = T, ...) {
@@ -101,7 +101,7 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
 #'   tp = projectDate(as.Date(dates))
 #'   monday.indices = which(tp$weekday == "Monday")
 #'   metrics[sample(monday.indices, 20),] = NA
-#'   cv.tsImpute(dates, dimensions, metrics)
+#'   cv.tsImpute(as.Date(dates), dimensions, metrics)
 #' @export
 cv.tsImpute = function(time, dimension, metric, ...) {
   prelim = cv.impute.prelim(metric)
