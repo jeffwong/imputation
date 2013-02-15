@@ -1,6 +1,8 @@
 imputation
 ==========
 
+[imputation on CRAN](http://cran.r-project.org/web/packages/imputation/index.html)
+
 Missing data imputation (also known as matrix completion) is an extremely difficult science that tries
 to fill in missing values of a dataset with the best guess.  Recently, it was popularized by the Netflix Challenge,
 where a matrix of Netflix users and their movie ratings were presented to the data science community to see
