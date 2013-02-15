@@ -23,4 +23,10 @@
   approximation with the imputed values and fill again,
   repeating num.iters times
 }
+\examples{
+x = matrix(rnorm(100),10,10)
+  x.missing = x > 1
+  x[x.missing] = NA
+  SVDImpute(x, 3)
+}
 

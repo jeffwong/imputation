@@ -8,6 +8,11 @@
 #' @param x a data frame or matrix where each row represents a different record
 #' @param lambda the penalty on the singular values
 #' @param verbose if TRUE print status updates
+#' @examples
+#'   x = matrix(rnorm(100),10,10)
+#'   x.missing = x > 1
+#'   x[x.missing] = NA
+#'   SVTApproxImpute(x, 3)
 #' @export
 SVTApproxImpute = function(x, lambda, verbose=F) {
   prelim = impute.prelim(x, byrow=F)
@@ -60,7 +65,7 @@ SVTApproxImpute = function(x, lambda, verbose=F) {
 #'   x = matrix(rnorm(100),10,10)
 #'   x.missing = x > 1
 #'   x[x.missing] = NA
-#'   cv.SVTImpute(x)
+#'   cv.SVTApproxImpute(x)
 #' @export
 cv.SVTApproxImpute = function(x, lambda.range = seq(0,1,length.out=101), parallel = F) {
   prelim = cv.impute.prelim(x)

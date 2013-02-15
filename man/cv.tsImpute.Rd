@@ -20,4 +20,18 @@
   erase some data and run gbmImpute.  Compute the RMSE on
   the subset of x for which data was artificially erased.
 }
+\examples{
+dates = timeSequence(from = '2012-01-01', to = '2012-12-31', by = 'day')
+  dimensions = sample(c("A", "B"), 366, replace = TRUE)
+  numA = length(which(dimensions == "A")); numB = length(which(dimensions == "B"))
+  metrics = matrix(0, 366, 2)
+  metrics[which(dimensions == "A"),1] = rnorm(numA, mean=1)
+  metrics[which(dimensions == "A"),2] = rnorm(numA, mean=5)
+  metrics[which(dimensions == "B"),1] = rnorm(numB, mean=-10)
+  metrics[which(dimensions == "B"),2] = rnorm(numB, mean=-5)
+  tp = projectDate(as.Date(dates))
+  monday.indices = which(tp$weekday == "Monday")
+  metrics[sample(monday.indices, 20),] = NA
+  cv.tsImpute(dates, dimensions, metrics)
+}
 

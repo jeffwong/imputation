@@ -16,6 +16,11 @@
 #' @param num.iters the number of times to compute the rank-k approximation
 #'   and impute the missing data
 #' @param verbose if TRUE print status updates
+#' @examples
+#'   x = matrix(rnorm(100),10,10)
+#'   x.missing = x > 1
+#'   x[x.missing] = NA
+#'   SVDImpute(x, 3)
 #' @export
 SVDImpute = function(x, k, num.iters = 10, verbose=T) {
   prelim = impute.prelim(x, byrow=F)

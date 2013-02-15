@@ -19,4 +19,10 @@
   each of the singular values, thresholding at 0.  Impute
   by multiplying back out the augmented SVD
 }
+\examples{
+x = matrix(rnorm(100),10,10)
+  x.missing = x > 1
+  x[x.missing] = NA
+  SVTApproxImpute(x, 3)
+}
 

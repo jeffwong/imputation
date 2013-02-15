@@ -2,6 +2,11 @@
 #'
 #' Fill missing values in a column with the mean of the column
 #' @param x a data frame or matrix where each row represents a different record
+#' @examples
+#'   x = matrix(rnorm(100),10,10)
+#'   x.missing = x > 1
+#'   x[x.missing] = NA
+#'   meanImpute(x)
 #' @export
 meanImpute = function(x) {
   prelim = impute.prelim(x, byrow=F)
@@ -27,6 +32,11 @@ meanImpute = function(x) {
 #' Artificially erase some data and run meanImpute to compute the RMSE on 
 #' the subset of x for which data was artificially erased.
 #' @param x a data frame or matrix where each row represents a different record
+#' @examples
+#'   x = matrix(rnorm(100),10,10)
+#'   x.missing = x > 1
+#'   x[x.missing] = NA
+#'   cv.meanImpute(x)
 #' @export
 cv.meanImpute = function(x) {
   prelim = cv.impute.prelim(x)

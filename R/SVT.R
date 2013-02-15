@@ -9,6 +9,11 @@
 #'   an SVD
 #' @param verbose if TRUE print status updates
 #' @references A Singular Value Thresholding Algorithm for Matrix Completion. Cai, Candes, Shen. 
+#' @examples
+#'   x = matrix(rnorm(100),10,10)
+#'   x.missing = x > 1
+#'   x[x.missing] = NA
+#'   SVTImpute(x, 3)
 #' @export
 SVTImpute = function(x, lambda, stepsize, threshold = 1e-3, max.iters = 10, verbose=F) {
   prelim = impute.prelim(x, byrow=F)

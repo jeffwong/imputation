@@ -33,4 +33,10 @@
   This imputation function can handle both categorical and
   numeric data.
 }
+\examples{
+x = matrix(rnorm(10000),1000,10)
+  x.missing = x > 2
+  x[x.missing] = NA
+  gbmImpute(x)
+}
 

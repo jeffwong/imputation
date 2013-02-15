@@ -15,4 +15,10 @@
   weighted least squares regression against the row number.
   Good for large data (large number of records)
 }
+\examples{
+x = matrix(rnorm(100),10,10)
+  x.missing = x > 1
+  x[x.missing] = NA
+  lmImpute(x)
+}
 

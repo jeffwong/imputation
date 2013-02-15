@@ -27,6 +27,7 @@
 #'   tp = projectDate(as.Date(dates))
 #'   monday.indices = which(tp$weekday == "Monday")
 #'   metrics[sample(monday.indices, 20),] = NA
+#'   cv.tsImpute(dates, dimensions, metrics)
 #' @export
 tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
                     n.trees = 100, verbose = T, ...) {
@@ -88,6 +89,19 @@ tsImpute = function(time, dimension, metric, max.iters = 2, cv.fold = 2,
 #' @param dimension a data frame of exogenous predictor variables
 #' @param metric a matrix where each column represents a time series
 #' @param ... extra parameters to be passed to tsImpute
+#' @examples
+#'   dates = timeSequence(from = '2012-01-01', to = '2012-12-31', by = 'day')
+#'   dimensions = sample(c("A", "B"), 366, replace = TRUE)
+#'   numA = length(which(dimensions == "A")); numB = length(which(dimensions == "B"))
+#'   metrics = matrix(0, 366, 2)
+#'   metrics[which(dimensions == "A"),1] = rnorm(numA, mean=1)
+#'   metrics[which(dimensions == "A"),2] = rnorm(numA, mean=5)
+#'   metrics[which(dimensions == "B"),1] = rnorm(numB, mean=-10)
+#'   metrics[which(dimensions == "B"),2] = rnorm(numB, mean=-5)
+#'   tp = projectDate(as.Date(dates))
+#'   monday.indices = which(tp$weekday == "Monday")
+#'   metrics[sample(monday.indices, 20),] = NA
+#'   cv.tsImpute(dates, dimensions, metrics)
 #' @export
 cv.tsImpute = function(time, dimension, metric, ...) {
   prelim = cv.impute.prelim(metric)
@@ -98,7 +112,7 @@ cv.tsImpute = function(time, dimension, metric, ...) {
   error = (metric[remove.indices] - metric.imputed[remove.indices])
   nerror = error / metric[remove.indices]
   rmse = sqrt(mean(error^2))
-  rmse = sqrt(mean(nerror^2))
+  nrmse = sqrt(mean(nerror^2))
   
   list(imputation = metric.imputed, rmse = rmse, nrmse = nrmse)
 }

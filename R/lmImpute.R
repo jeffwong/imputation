@@ -5,6 +5,11 @@
 #' Good for large data (large number of records)
 #' @param x a data frame or matrix where each row represents a different record
 #' @param ... additional parameters passed to locfit
+#' @examples
+#'   x = matrix(rnorm(100),10,10)
+#'   x.missing = x > 1
+#'   x[x.missing] = NA
+#'   lmImpute(x)
 #' @export
 lmImpute = function(x, ...) {
   prelim = impute.prelim(x, byrow=F)

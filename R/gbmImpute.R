@@ -13,6 +13,11 @@
 #' @param n.trees the number of trees used in gradient boosting machines
 #' @param verbose if TRUE print status updates
 #' @param ... additional params passed to gbm
+#' @examples
+#'   x = matrix(rnorm(10000),1000,10)
+#'   x.missing = x > 2
+#'   x[x.missing] = NA
+#'   gbmImpute(x)
 #' @export
 gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T, ...) {
   if (nrow(x) < 1000) warning("Tree based imputation works best with larger data (> 1000 obs)")
@@ -73,8 +78,8 @@ gbmImpute = function(x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T, 
 #' @param x a data frame or matrix where each row represents a different record
 #' @param ... extra parameters to be passed to gbmImpute
 #' @examples
-#'   x = matrix(rnorm(100),10,10)
-#'   x.missing = x > 1
+#'   x = matrix(rnorm(10000),1000,10)
+#'   x.missing = x > 2
 #'   x[x.missing] = NA
 #'   cv.gbmImpute(x)
 #' @export

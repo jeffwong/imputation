@@ -50,5 +50,6 @@ dates = timeSequence(from = '2012-01-01', to = '2012-12-31', by = 'day')
   tp = projectDate(as.Date(dates))
   monday.indices = which(tp$weekday == "Monday")
   metrics[sample(monday.indices, 20),] = NA
+  cv.tsImpute(dates, dimensions, metrics)
 }
 
