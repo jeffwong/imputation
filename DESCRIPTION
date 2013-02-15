@@ -2,7 +2,7 @@ Package: imputation
 Type: Package
 Title: imputation
 Version: 2.0.0
-Date: 2013-01-31
+Date: 2013-02-14
 Author: Jeffrey Wong
 URL: https://github.com/jeffwong/imputation
 Maintainer: Jeffrey Wong <jeff.ct.wong@gmail.com>
@@ -14,12 +14,10 @@ Depends:
     gbm,
     TimeProjection,
     locfit,
-    splines
 Suggests:
     pdist,
     foreach,
     doMC,
-    robustbase
 Collate:
     'SVD.R'
     'SVT.R'
