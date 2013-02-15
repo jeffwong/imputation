@@ -72,17 +72,20 @@ cv.SVTApproxImpute = function(x, lambda.range = seq(0,1,length.out=101), paralle
                                  as a registered parallel backend")
     rmse = foreach (i=lambda.range, .combine = c, .packages = c('imputation')) %dopar% {
       x.imputed = SVTApproxImpute(x.train, i, verbose=F)$x
-      error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
-      sqrt(mean(error^2))
+      error = (x.imputed[remove.indices] - x[remove.indices])
+      nerror = error / x[remove.indices]
+      list(nrmse = sqrt(mean(nerror^2)), rmse = sqrt(mean(error^2))) 
     }
   }
   else {
     rmse = sapply(lambda.range, function(i) {
       x.imputed = SVTApproxImpute(x.train, i, verbose=F)$x
-      error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
-      sqrt(mean(error^2))
+      error = (x.imputed[remove.indices] - x[remove.indices])
+      nerror = error / x[remove.indices]
+      list(nrmse = sqrt(mean(nerror^2)), rmse = sqrt(mean(error^2))) 
     })
   }
+  nrmse = unlist(rmse[1,]); rmse = unlist(rmse[2,])
   list(lambda = lambda.range[which.min(rmse)], rmse = rmse[which.min(rmse)],
-       lambda.full = lambda.range, rmse.full = rmse)
+       lambda.full = lambda.range, rmse.full = rmse, nrmse.full = nrmse)
 }

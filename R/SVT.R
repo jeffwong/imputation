@@ -17,6 +17,7 @@ SVTImpute = function(x, lambda, stepsize, threshold = 1e-3, max.iters = 10, verb
 
   x.zeroimpute = x
   x.zeroimpute[missing.matrix] = 0
+  x.zeroimpute.norm = norm(x.zeroimpute, "F")
 
   if (missing(stepsize)) stepsize = min(1.2 * length(x) / sum(missing.matrix), 1.9)
   k = ceiling(lambda / ( stepsize * norm(x.zeroimpute, "2")))
@@ -35,7 +36,7 @@ SVTImpute = function(x, lambda, stepsize, threshold = 1e-3, max.iters = 10, verb
     }
     X.k = (y.svd$u %*% diag(d.augmented) %*% t(y.svd$v))
     X.k.temp = X.k; X.k.temp[missing.matrix] = 0
-    if (norm(X.k.temp - x.zeroimpute, "F") / norm(x.zeroimpute, "F") < threshold) {
+    if (norm(X.k.temp - x.zeroimpute, "F") / x.zeroimpute.norm < threshold) {
       if (verbose) print(paste("Converging on iteration", iter))
       break
     }
@@ -76,17 +77,20 @@ cv.SVTImpute = function(x, lambda.range = seq(0,1,length.out=101), parallel = F,
                                  as a registered parallel backend")
     rmse = foreach (i=lambda.range, .combine = c, .packages = c('imputation')) %dopar% {
       x.imputed = SVTImpute(x.train, i, verbose=F, ...)$x
-      error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
-      sqrt(mean(error^2))
+      error = (x.imputed[remove.indices] - x[remove.indices])
+      nerror = error / x[remove.indices]
+      list(nrmse = sqrt(mean(nerror^2)), rmse = sqrt(mean(error^2))) 
     }
   }
   else {
     rmse = sapply(lambda.range, function(i) {
       x.imputed = SVTImpute(x.train, i, verbose=F, ...)$x
-      error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
-      sqrt(mean(error^2))
+      error = (x.imputed[remove.indices] - x[remove.indices])
+      nerror = error / x[remove.indices]
+      list(nrmse = sqrt(mean(nerror^2)), rmse = sqrt(mean(error^2)))
     })
   }
+  nrmse = unlist(rmse[1,]); rmse = unlist(rmse[2,])
   list(lambda = lambda.range[which.min(rmse)], rmse = rmse[which.min(rmse)],
-       lambda.full = lambda.range, rmse.full = rmse)
+       lambda.full = lambda.range, rmse.full = rmse, nrmse.full = nrmse)
 }

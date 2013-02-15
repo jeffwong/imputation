@@ -95,8 +95,10 @@ cv.tsImpute = function(time, dimension, metric, ...) {
   metric.train = prelim$x.train
 
   metric.imputed = tsImpute(time, dimension, metric.train, verbose=F, ...)$x
-  error = (metric[remove.indices] - metric.imputed[remove.indices]) / metric[remove.indices]
+  error = (metric[remove.indices] - metric.imputed[remove.indices])
+  nerror = error / metric[remove.indices]
   rmse = sqrt(mean(error^2))
+  rmse = sqrt(mean(nerror^2))
   
-  list(imputation = metric.imputed, rmse = rmse)
+  list(imputation = metric.imputed, rmse = rmse, nrmse = nrmse)
 }

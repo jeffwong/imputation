@@ -81,17 +81,20 @@ cv.SVDImpute = function(x, k.max=floor(ncol(x)/2), parallel = F) {
                                  as a registered parallel backend")
     rmse = foreach (i = 1:k.max, .combine = c, .packages = c('imputation')) %dopar% {
       x.imputed = SVDImpute(x.train, i, verbose=F)$x
-      error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
-      sqrt(mean(error^2))
+      error = (x.imputed[remove.indices] - x[remove.indices])
+      nerror = error / x[remove.indices]
+      list(nrmse = sqrt(mean(nerror^2)), rmse = sqrt(mean(error^2)))
     }
   }
   else {
     rmse = sapply(1:k.max, function(i) {
       x.imputed = SVDImpute(x.train, i, verbose=F)$x
-      error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
-      sqrt(mean(error^2))
+      error = (x.imputed[remove.indices] - x[remove.indices])
+      nerror = error / x[remove.indices]
+      list(nrmse = sqrt(mean(nerror^2)), rmse = sqrt(mean(error^2))) 
     })
   }
+  nrmse = unlist(rmse[1,]); rmse = unlist(rmse[2,])
   list(k = which.min(rmse), rmse = rmse[which.min(rmse)],
-       k.full = 1:k.max, rmse.full = rmse)
+       k.full = 1:k.max, rmse.full = rmse, nrmse.full = nrmse)
 }

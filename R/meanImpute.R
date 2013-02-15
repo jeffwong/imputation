@@ -34,8 +34,10 @@ cv.meanImpute = function(x) {
   x.train = prelim$x.train
 
   x.imputed = meanImpute(x.train)$x
-  error = (x[remove.indices] - x.imputed[remove.indices]) / x[remove.indices]
+  error = (x[remove.indices] - x.imputed[remove.indices])
+  nerror = error / x[remove.indices]
   rmse = sqrt(mean(error^2))
+  nrmse = sqrt(mean(nerror^2))
   
-  list(imputation = x.imputed, rmse = rmse)
+  list(imputation = x.imputed, rmse = rmse, nrmse = nrmse)
 }
