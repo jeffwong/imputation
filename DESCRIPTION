@@ -28,3 +28,4 @@ Collate:
     'lmImpute.R'
     'tsImpute.R'
     'SVTApprox.R'
+    'robustsvd.R'
