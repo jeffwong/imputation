@@ -25,7 +25,7 @@ SVTImpute = function(x, lambda, stepsize, threshold = 1e-3, max.iters = 10, verb
   x.zeroimpute.norm = norm(x.zeroimpute, "F")
 
   if (missing(stepsize)) stepsize = min(1.2 * length(x) / sum(missing.matrix), 1.9)
-  k = ceiling(lambda / ( stepsize * norm(x.zeroimpute, "2")))
+  k = ceiling(lambda / ( stepsize * norm(x.zeroimpute, "F")))
 
   Y = k*stepsize*x.zeroimpute
 
