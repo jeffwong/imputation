@@ -152,11 +152,11 @@ cv.kNNImpute = function(x, k.max=5, parallel = F) {
   j.smaller.indices = which(j < i)
   if (length(j.larger.indices) > 0) {
     j.larger = j[j.larger.indices]
-    ret[1:length(j.larger)] = (j.larger-1)*n - j.larger^2/2 + i - 1
+    ret[j.larger.indices] = (i-1)*n - i^2/2 + j.larger - i/2
   }
   if (length(j.smaller.indices) > 0) {
     j.smaller = j[j.smaller.indices]
-    ret[(length(j.larger.indices)+1) : length(j)] = (i-1)*n - i^2/2 + j.smaller - 1
+    ret[j.smaller.indices] = (j.smaller-1)*n - j.smaller^2/2 + i - j.smaller/2
   }
   ret
 }
