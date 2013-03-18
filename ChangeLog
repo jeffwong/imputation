@@ -1,2 +1,5 @@
-Version 2.0.2 (17 March 2013)
-  * Fix bug in kNNImpute where missing values were imputed to 0
+Version 2.0.2 (18 March 2013)
+  * Fix bug in kNNImpute where missing values were imputed to 0 due to a
+  problem in .dist.2dto1d
+  * When only one column is missing, do not autoconvert that column into a
+  vector when computing missing.matrix
