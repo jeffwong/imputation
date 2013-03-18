@@ -19,8 +19,8 @@ impute.prelim = function(x, byrow = T, verbose=F) {
   missing.cols.indices = which(apply(missing.matrix, 2, function(i) {
     any(i)
   }))
-  if (byrow) x.missing = cbind(1:nrow(x),x)[missing.rows.indices,]
-  else x.missing = rbind(1:ncol(x),x)[,missing.cols.indices]
+  if (byrow) x.missing = cbind(1:nrow(x),x)[missing.rows.indices,,drop=F]
+  else x.missing = rbind(1:ncol(x),x)[,missing.cols.indices,drop=F]
 
   return ( list (missing.matrix = missing.matrix,
                  numMissing = numMissing,
@@ -29,12 +29,12 @@ impute.prelim = function(x, byrow = T, verbose=F) {
                  x.missing = x.missing) )
 }
 
-cv.impute.prelim = function(x) {
+cv.impute.prelim = function(x, test.fraction = 1/3) {
   n = nrow(x) * ncol(x)
   missing.matrix = is.na(x)
   valid.data = which(!missing.matrix)
 
-  remove.indices = sample(valid.data, 1/3*length(valid.data))
+  remove.indices = sample(valid.data, test.fraction*length(valid.data))
   x.train = x; x.train[remove.indices] = NA
 
   return (list(remove.indices = remove.indices,
