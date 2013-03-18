@@ -12,13 +12,18 @@
 #'   normalizes the distances by the max distance, and are subtracted by 1.  The result
 #'   is the weighted mean of the values of the nearest neighbors and their weight based
 #'   on their distance.  It is implemented as follows:
-#' \code{impute.fn = function(values, distances, k) {
+#' \preformatted{impute.fn = function(values, distances, k) {
 #'   ranks = order(distances)
 #'   smallest.distances = distances[ranks][1:k]
 #'   #values corresponding to smallest distances
 #'   knn.values = values[ranks][1:k]
 #'   knn.weights = 1 - (smallest.distances / max(distances))
 #'   weighted.mean(knn.values, knn.weights)
+#' }}
+#' A simple mean can be implemented as follows:
+#' \preformatted{impute.fn = function(values, distances, k) {
+#'   ranks = order(distances)
+#'   mean(distances[ranks][1:k])
 #' }}
 #' @param x a data frame or matrix where each row represents a different record
 #' @param k the number of neighbors to use for imputation
