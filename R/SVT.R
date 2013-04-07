@@ -16,6 +16,7 @@
 #'   SVTImpute(x, 3)
 #' @export
 SVTImpute = function(x, lambda, stepsize, threshold = 1e-3, max.iters = 10, verbose=F) {
+  if (!is.matrix(x)) stop("x should be a numeric data matrix")
   prelim = impute.prelim(x, byrow=F)
   if (prelim$numMissing == 0) return (x)
   missing.matrix = prelim$missing.matrix
@@ -73,6 +74,7 @@ SVTImpute = function(x, lambda, stepsize, threshold = 1e-3, max.iters = 10, verb
 #'   cv.SVTImpute(x)
 #' @export
 cv.SVTImpute = function(x, lambda.range = seq(0,1,length.out=101), parallel = F, ...) {
+  if (!is.matrix(x)) stop("x should be a numeric data matrix")
   prelim = cv.impute.prelim(x)
   remove.indices = prelim$remove.indices
   x.train = prelim$x.train

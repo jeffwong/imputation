@@ -40,6 +40,7 @@
 #'   kNNImpute(x, 3)
 #' @export
 kNNImpute = function(x, k, x.dist = NULL, impute.fn, verbose=T) {
+  if (!is.matrix(x)) stop("x should be a numeric data matrix")
   if(k >= nrow(x)) stop("k must be less than the number of rows in x")
 
   prelim = impute.prelim(x)
@@ -63,8 +64,8 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn, verbose=T) {
   if (verbose) print("Distance matrix complete")
   
   x.missing.imputed = t(apply(x.missing, 1, function(i) {
-    rowIndex = i[1]
-    i.original = i[-1]
+    rowIndex = as.numeric(i[1])
+    i.original = unlist(i[-1])
     if(verbose) print(paste("Imputing row", rowIndex,sep=" "))
     missing.cols = which(missing.matrix[rowIndex,])
     if(length(missing.cols) == ncol(x))
@@ -114,6 +115,7 @@ kNNImpute = function(x, k, x.dist = NULL, impute.fn, verbose=T) {
 #'   cv.kNNImpute(x)
 #' @export
 cv.kNNImpute = function(x, k.max=5, parallel = F) {
+  if (!is.matrix(x)) stop("x should be a numeric data matrix")
   if (k.max >= nrow(x)) stop("k.max must be less than nrow(x)")
 
   prelim = cv.impute.prelim(x)
