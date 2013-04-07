@@ -1,8 +1,8 @@
 Package: imputation
 Type: Package
 Title: imputation
-Version: 2.0.2
-Date: 2013-02-17
+Version: 2.0.3
+Date: 2013-04-07
 Author: Jeffrey Wong
 URL: https://github.com/jeffwong/imputation
 Maintainer: Jeffrey Wong <jeff.ct.wong@gmail.com>

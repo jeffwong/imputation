@@ -1,3 +1,9 @@
+Version 2.0.3 (7 April 2013)
+  * Fix bug in kNNImpute where the missing row index was a 1x1 data frame
+  instead of numeric
+  * Remove references to nrmse
+  * Require x to be a numeric matrix in kNNImpute and SVDImpute
+
 Version 2.0.2 (18 March 2013)
   * Fix bug in kNNImpute where missing values were imputed to 0 due to a
   problem in .dist.2dto1d
