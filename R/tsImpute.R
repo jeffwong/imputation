@@ -112,7 +112,6 @@ cv.tsImpute = function(time, dimension, metric, ...) {
   error = (metric[remove.indices] - metric.imputed[remove.indices])
   nerror = error / metric[remove.indices]
   rmse = sqrt(mean(error^2))
-  nrmse = sqrt(mean(nerror^2))
   
-  list(imputation = metric.imputed, rmse = rmse, nrmse = nrmse)
+  list(imputation = metric.imputed, rmse = rmse)
 }

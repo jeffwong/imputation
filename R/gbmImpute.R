@@ -92,7 +92,6 @@ cv.gbmImpute = function(x, ...) {
   error = (x[remove.indices] - x.imputed[remove.indices])
   nerror = error / x[remove.indices]
   rmse = sqrt(mean(error^2))
-  nrmse = sqrt(mean(nerror^2))
   
-  list(imputation = x.imputed, rmse = rmse, nrmse = nrmse)
+  list(imputation = x.imputed, rmse = rmse)
 }

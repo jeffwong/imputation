@@ -129,21 +129,18 @@ cv.kNNImpute = function(x, k.max=5, parallel = F) {
     rmse = foreach (i=1:k.max, .combine = c, .packages = c('imputation')) %dopar% {
       x.imputed = kNNImpute(x.train, i, x.dist, verbose=F)$x
       error = (x.imputed[remove.indices] - x[remove.indices])
-      nerror = error / x[remove.indices]
-      list(nrmse = sqrt(mean(nerror^2)), rmse = sqrt(mean(error^2)))
+      sqrt(mean(error^2))
     }
   }
   else {
     rmse = sapply(1:k.max, function(i) {
       x.imputed = kNNImpute(x.train, i, x.dist, verbose=F)$x
       error = (x.imputed[remove.indices] - x[remove.indices])
-      nerror = error / x[remove.indices]
-      list(nrmse = sqrt(mean(nerror^2)), rmse = sqrt(mean(error^2)))
+      sqrt(mean(error^2))
     })
   }
-  nrmse = unlist(rmse[1,]); rmse = unlist(rmse[2,])
   list(k = which.min(rmse), rmse = rmse[which.min(rmse)],
-       k.full = 1:k.max, rmse.full = rmse, nrmse.full = nrmse)
+       k.full = 1:k.max, rmse.full = rmse)
 }
 
 #' 2D indices to 1D indices
