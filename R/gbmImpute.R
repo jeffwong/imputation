@@ -35,14 +35,14 @@ gbmImpute = function (x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T,
     for (i in 1:max.iters) {
         if (verbose)
             print(paste("Begin iteration: ", i))
-        x[, missing.cols.indices] = sapply(missing.cols.indices,
+        x[, missing.cols.indices] = cbind(lapply(missing.cols.indices,
             function(j) {
                 j = as.numeric(j)
                 if (verbose)
                   print(paste("Imputing on feature: ", j))
                 if (i == 1)
                   good.data = which(!missing.matrix[, j])
-                else good.data = 1:nrow(x)
+                else good.data = 1:nrow(x) #sort of like multiple imputation
                 bad.data = which(missing.matrix[, j])
                 data = x[good.data, -j]
                 if (!is.data.frame(data))
@@ -68,6 +68,7 @@ gbmImpute = function (x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T,
                 if(datatype != "factor")
                   x[bad.data, j] = data.predict
                 if(datatype == "factor") {
+                  #Credit Antonio M. for categorical imputation
                   j.levels = levels(x[good.data[1],j])
                   data.predict = as.data.frame(data.predict)
                   multinomial.pred = data.predict = apply(data.predict,1,function(i) {
@@ -76,7 +77,7 @@ gbmImpute = function (x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T,
                   x[bad.data, j] = factor(multinomial.pred, levels = j.levels)
                 }
                 x[, j]
-            })
+            }))
     }
     return(list(x = x, missing.matrix = missing.matrix))
 }
