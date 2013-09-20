@@ -1,6 +1,6 @@
-impute.prelim = function(x, byrow = T, verbose=F) {
+impute.prelim = function(x, byrow = T, keep.x.missing = T, verbose=F) {
   missing.matrix = is.na(x)
-  numMissing = sum(missing.matrix) 
+  numMissing = sum(missing.matrix)
   if(verbose) {
     print(paste("imputing on", numMissing, "missing values with matrix size",
       nrow(x)*ncol(x), sep=" "))
@@ -19,8 +19,11 @@ impute.prelim = function(x, byrow = T, verbose=F) {
   missing.cols.indices = which(apply(missing.matrix, 2, function(i) {
     any(i)
   }))
-  if (byrow) x.missing = cbind(1:nrow(x),x)[missing.rows.indices,,drop=F]
-  else x.missing = rbind(1:ncol(x),x)[,missing.cols.indices,drop=F]
+
+  if (keep.x.missing) {
+    if (byrow) x.missing = cbind(1:nrow(x),x)[missing.rows.indices,,drop=F]
+    else x.missing = rbind(1:ncol(x),x)[,missing.cols.indices,drop=F]
+  } else x.missing = NULL
 
   return ( list (missing.matrix = missing.matrix,
                  numMissing = numMissing,
