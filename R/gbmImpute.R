@@ -11,6 +11,8 @@
 #'   impute each column with fitted values from a regression tree
 #' @param cv.fold number of folds that gbm should use internally for cross validation
 #' @param n.trees the number of trees used in gradient boosting machines
+#' @param impute.cols limit imputation to columns with these names.  IF NULL then
+#'   impute on all columns
 #' @param verbose if TRUE print status updates
 #' @param ... additional params passed to gbm
 #' @examples
@@ -19,7 +21,7 @@
 #'   x[x.missing] = NA
 #'   gbmImpute(x)
 #' @export
-gbmImpute = function (x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T,
+gbmImpute = function (x, max.iters = 2, cv.fold = 2, n.trees = 100, impute.cols = NULL, verbose = T,
     ...)
 {
     if (nrow(x) < 1000)
@@ -29,6 +31,10 @@ gbmImpute = function (x, max.iters = 2, cv.fold = 2, n.trees = 100, verbose = T,
         return(x)
     missing.matrix = prelim$missing.matrix
     missing.cols.indices = prelim$missing.cols.indices
+    if(length(impute.cols) > 0) {
+      impute.cols.ind = match(impute.cols, colnames(x))
+      missing.cols.indices = missing.cols.indices[match(impute.cols.ind, missing.cols.indices)]
+    }
     if (verbose)
         print(paste("Training over:", length(missing.cols.indices),
             "missing features"))
