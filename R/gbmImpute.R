@@ -56,13 +56,14 @@ gbmImpute = function (x, max.iters = 2, cv.fold = 2, n.trees = 100, impute.cols 
                 datatype = data.class(x[good.data[1],j])
                 distribution = switch(datatype,
                                       factor = "multinomial",
+                                      logical = "bernoulli",
                                       "gaussian")
                 y = x[good.data,j]
                 gbm1 <- gbm(y ~ ., data = data,
                   var.monotone = rep(0, ncol(x) - 1), distribution = distribution,
                   n.trees = n.trees, shrinkage = 0.005, interaction.depth = 3,
                   bag.fraction = 0.5, train.fraction = 2/3, n.minobsinnode = 10,
-                  cv.folds = cv.fold, keep.data = TRUE, verbose = verbose,
+                  cv.folds = cv.fold, keep.data = FALSE, verbose = verbose,
                   ...)
                 best.iter <- gbm.perf(gbm1, method = "test",
                   plot.it = F)
@@ -71,9 +72,9 @@ gbmImpute = function (x, max.iters = 2, cv.fold = 2, n.trees = 100, impute.cols 
                   newdata = data.frame(data = newdata)
                 data.predict = predict(gbm1, newdata = newdata,
                   n.trees = best.iter)
-                if(datatype != "factor")
+                if (distribution == "gaussian")
                   x[bad.data, j] = data.predict
-                if(datatype == "factor") {
+                if (distribution == "multinomial") {
                   #Credit Antonio M. for categorical imputation
                   j.levels = levels(x[good.data[1],j])
                   data.predict = as.data.frame(data.predict)
@@ -81,6 +82,10 @@ gbmImpute = function (x, max.iters = 2, cv.fold = 2, n.trees = 100, impute.cols 
                     sample(j.levels, prob = i - min(i), size = 1)
                   })
                   x[bad.data, j] = factor(multinomial.pred, levels = j.levels)
+                }
+                if (distribution == "bernoulli") {
+                  bernoulli.pred = as.logical(data.predict >= .5)
+                  x[bad.data, j] = bernoulli.pred
                 }
                 x[, j]
             }))
