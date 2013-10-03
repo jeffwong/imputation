@@ -3,7 +3,7 @@
 \title{GBM Imputation}
 \usage{
   gbmImpute(x, max.iters = 2, cv.fold = 2, n.trees = 100,
-    verbose = T, ...)
+    impute.cols = NULL, verbose = T, ...)
 }
 \arguments{
   \item{x}{a data frame or matrix where each row is a
@@ -18,6 +18,9 @@
 
   \item{n.trees}{the number of trees used in gradient
   boosting machines}
+
+  \item{impute.cols}{limit imputation to columns with these
+  names.  IF NULL then impute on all columns}
 
   \item{verbose}{if TRUE print status updates}
 
