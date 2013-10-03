@@ -20,7 +20,7 @@ mmmImpute = function(x) {
   if (prelim$numMissing == 0) return (x)
   missing.matrix = prelim$missing.matrix
 
-  x.imputed = apply(x[,prelim$missing.cols.indices], 2, function(j) {
+  x.imputed = lapply(x[,prelim$missing.cols.indices], function(j) {
     bad.indices = which(is.na(j))
     datatype = data.class(j)
     if (datatype %in% c('factor', 'Date', 'character', 'logical')) {
@@ -37,7 +37,7 @@ mmmImpute = function(x) {
     }
     return (j)
   })
-  x[,prelim$missing.cols.indices] = x.imputed
+  x[,prelim$missing.cols.indices] = cbind(x.imputed)
   
   return (list(x = x,
                missing.matrix = missing.matrix))
